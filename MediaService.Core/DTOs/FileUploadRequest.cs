@@ -1,5 +1,6 @@
 ﻿namespace MediaService.Core.DTOs
 {
+
     /// <summary>
     /// Request model for file upload using stream (multipart/form-data)
     /// This is the RECOMMENDED and most efficient method for file uploads

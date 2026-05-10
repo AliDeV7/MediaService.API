@@ -58,23 +58,43 @@ namespace MediaService.Infrastructure.Validation
         /// <summary>
         /// Validates MIME type consistency with the file extension
         /// </summary>
-        public bool ValidateMimeType(string fileName, string contentType)
+        /// <exception cref="UnsupportedFileTypeException">Thrown when MIME type doesn't match extension</exception>
+        public void ValidateMimeType(string fileName, string contentType)
         {
             var ext = Path.GetExtension(fileName);
 
             if (string.IsNullOrWhiteSpace(ext) || string.IsNullOrWhiteSpace(contentType))
-                return false;
+                throw new UnsupportedFileTypeException("File name or content type is missing.");
 
             if (!FileTypeHelper.ExtensionMimeMap.TryGetValue(ext, out var allowedMimes))
-                return false;
+                throw new UnsupportedFileTypeException($"No MIME type mapping found for extension '{ext}'.");
 
-            return allowedMimes.Contains(contentType, StringComparer.OrdinalIgnoreCase);
+            if (!allowedMimes.Contains(contentType, StringComparer.OrdinalIgnoreCase))
+                throw new UnsupportedFileTypeException(
+                    $"MIME type '{contentType}' does not match extension '{ext}'. Expected: {string.Join(", ", allowedMimes)}");
         }
 
         /// <summary>
         /// Validates file content against known magic byte signatures
         /// </summary>
-        public bool ValidateMagicBytes(Stream stream, string contentType)
-            => FileTypeHelper.MatchesMagicBytes(stream, contentType);
+        /// <exception cref="UnsupportedFileTypeException">Thrown when content doesn't match expected type</exception>
+        public void ValidateMagicBytes(Stream stream, string contentType)
+        {
+            if (!FileTypeHelper.MatchesMagicBytes(stream, contentType))
+                throw new UnsupportedFileTypeException(
+                    $"File content (magic bytes) does not match the declared MIME type '{contentType}'.");
+        }
+
+        /// <summary>
+        /// Performs complete file validation including size, extension, MIME type, and magic bytes
+        /// </summary>
+        public void ValidateFile(string fileName, long fileSize, string contentType, Stream stream)
+        {
+            ValidateFileSize(fileSize);
+            ValidateFileExtension(fileName);
+            ValidateMimeType(fileName, contentType);
+            ValidateMagicBytes(stream, contentType);
+        }
     }
+
 }
