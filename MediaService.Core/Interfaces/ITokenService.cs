@@ -1,24 +1,18 @@
-﻿namespace MediaService.Core.Interfaces
+﻿using MediaService.Core.DTOs;
+
+namespace MediaService.Core.Interfaces
 {
     /// <summary>
-    /// Interface for JWT token operations
+    /// Handles JWT token generation and client authentication
     /// </summary>
     public interface ITokenService
     {
         /// <summary>
-        /// Generates JWT token for authenticated client
+        /// Authenticates client credentials and issues a JWT token
         /// </summary>
-        /// <param name="clientId">Client identifier</param>
-        /// <param name="roles">Client roles</param>
-        /// <returns>JWT token string</returns>
-        string GenerateToken(string clientId, string[] roles);
-
-        /// <summary>
-        /// Validates client credentials against configuration
-        /// </summary>
-        /// <param name="clientId">Client identifier</param>
-        /// <param name="clientSecret">Client secret</param>
-        /// <returns>True if valid, false otherwise</returns>
-        bool ValidateCredentials(string clientId, string clientSecret);
+        /// <param name="request">Client credentials</param>
+        /// <returns>Authentication response with token</returns>
+        /// <exception cref="UnauthorizedException">Thrown when credentials are invalid</exception>
+        Task<AuthResponse> AuthenticateAsync(AuthRequest request);
     }
 }
