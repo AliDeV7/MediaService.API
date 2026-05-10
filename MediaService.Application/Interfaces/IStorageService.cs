@@ -1,9 +1,8 @@
-﻿using MediaService.Core.DTOs;
+﻿using MediaService.Application.DTOs;
 using MediaService.Core.Entities;
 
-namespace MediaService.Core.Interfaces
+namespace MediaService.Application.Interfaces
 {
-
     /// <summary>
     /// Interface for file storage operations.
     /// Supports both IFormFile (efficient) and Base64 (compatibility) inputs.

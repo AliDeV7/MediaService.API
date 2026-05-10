@@ -1,4 +1,4 @@
-﻿namespace MediaService.Core.Interfaces
+﻿namespace MediaService.Application.Interfaces
 {
     /// <summary>
     /// Provides image processing operations including thumbnail generation, format conversion, validation, and dimension extraction.

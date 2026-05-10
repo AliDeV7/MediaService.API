@@ -1,0 +1,6 @@
+@MediaService.Presentation.Api_HostAddress = http://localhost:5153
+
+GET {{MediaService.Presentation.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,4 +1,4 @@
-﻿namespace MediaService.Core.DTOs
+﻿namespace MediaService.Application.DTOs
 {
     /// <summary>
     /// Request model for base64 file upload (JSON payload)

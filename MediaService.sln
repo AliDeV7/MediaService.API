@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaService.Core", "MediaS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaService.Infrastructure", "MediaService.Infrastructure\MediaService.Infrastructure.csproj", "{91D6B355-E902-40CC-B802-6BAF926A7DDD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaService.Presentation.Api", "MediaService.Presentation.Api\MediaService.Presentation.Api.csproj", "{5385C5F6-393A-4FFD-BAF2-3E21AA9947BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaService.Application", "MediaService.Application\MediaService.Application.csproj", "{D2B76EBC-BCFB-4872-BDCD-C270FB0E9B92}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{91D6B355-E902-40CC-B802-6BAF926A7DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91D6B355-E902-40CC-B802-6BAF926A7DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91D6B355-E902-40CC-B802-6BAF926A7DDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5385C5F6-393A-4FFD-BAF2-3E21AA9947BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5385C5F6-393A-4FFD-BAF2-3E21AA9947BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5385C5F6-393A-4FFD-BAF2-3E21AA9947BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5385C5F6-393A-4FFD-BAF2-3E21AA9947BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2B76EBC-BCFB-4872-BDCD-C270FB0E9B92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2B76EBC-BCFB-4872-BDCD-C270FB0E9B92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2B76EBC-BCFB-4872-BDCD-C270FB0E9B92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2B76EBC-BCFB-4872-BDCD-C270FB0E9B92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

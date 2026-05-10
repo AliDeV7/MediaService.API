@@ -1,6 +1,6 @@
-﻿using MediaService.Core.DTOs;
+﻿using MediaService.Application.DTOs;
 
-namespace MediaService.Core.Interfaces
+namespace MediaService.Infrastructure.Authentication
 {
     /// <summary>
     /// Handles JWT token generation and client authentication

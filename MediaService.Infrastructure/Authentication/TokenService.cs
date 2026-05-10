@@ -1,7 +1,6 @@
-﻿using MediaService.Core.DTOs;
+﻿using MediaService.Application.DTOs;
 using MediaService.Core.Entities;
 using MediaService.Core.Exceptions;
-using MediaService.Core.Interfaces;
 using MediaService.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

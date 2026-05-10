@@ -1,7 +1,6 @@
-﻿using MediaService.Core.DTOs;
+﻿using MediaService.Application.DTOs;
+using MediaService.Application.Interfaces;
 using MediaService.Core.Entities;
-using MediaService.Core.Exceptions;
-using MediaService.Core.Interfaces;
 using MediaService.Infrastructure.Helpers;
 using MediaService.Infrastructure.Options;
 using Microsoft.Extensions.Options;

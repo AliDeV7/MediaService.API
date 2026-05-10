@@ -1,6 +1,6 @@
 ﻿using MediaService.Core.Enums;
 using MediaService.Core.Exceptions;
-using MediaService.Core.Interfaces;
+using MediaService.Application.Interfaces;
 using MediaService.Infrastructure.Helpers;
 using MediaService.Infrastructure.Options;
 using Microsoft.Extensions.Options;
