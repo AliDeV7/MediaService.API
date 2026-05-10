@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35431.28
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaService.Core", "MediaService.Core\MediaService.Core.csproj", "{8913AAE9-60BB-4F03-88B8-1B562AFE176F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaService.Core", "MediaService.Core\MediaService.Core.csproj", "{8913AAE9-60BB-4F03-88B8-1B562AFE176F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaService.Infrastructure", "MediaService.Infrastructure\MediaService.Infrastructure.csproj", "{91D6B355-E902-40CC-B802-6BAF926A7DDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{8913AAE9-60BB-4F03-88B8-1B562AFE176F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8913AAE9-60BB-4F03-88B8-1B562AFE176F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8913AAE9-60BB-4F03-88B8-1B562AFE176F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91D6B355-E902-40CC-B802-6BAF926A7DDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91D6B355-E902-40CC-B802-6BAF926A7DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91D6B355-E902-40CC-B802-6BAF926A7DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91D6B355-E902-40CC-B802-6BAF926A7DDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

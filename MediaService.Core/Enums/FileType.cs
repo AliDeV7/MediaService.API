@@ -26,8 +26,8 @@
         Document = 4,
 
         /// <summary>
-        /// Other file types
+        /// Unknown file types
         /// </summary>
-        Other = 5
+        Unknown = 5
     }
 }
