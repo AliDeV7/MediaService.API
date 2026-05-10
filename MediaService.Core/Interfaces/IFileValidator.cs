@@ -35,6 +35,14 @@ namespace MediaService.Core.Interfaces
         /// <param name="contentType">MIME type</param>
         /// <returns>True if valid, false otherwise</returns>
         bool ValidateMimeType(string fileName, string contentType);
+
+        /// <summary>
+        /// Validates file content against known magic byte signatures
+        /// </summary>
+        /// <param name="stream">File stream to inspect</param>
+        /// <param name="contentType">Expected MIME type</param>
+        /// <returns>True if content matches the expected type, false otherwise</returns>
+        bool ValidateMagicBytes(Stream stream, string contentType);
     }
 
 }
