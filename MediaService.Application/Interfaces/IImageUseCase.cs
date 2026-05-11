@@ -18,6 +18,11 @@ namespace MediaService.Application.Interfaces
             UploadImageFileDto request,
             CancellationToken cancellationToken = default);
 
+
+        Task<UploadResponseDto> UploadBase64Async(
+            UploadImageBase64Dto request,
+            CancellationToken cancellationToken = default);
+
         /// <summary>
         /// Deletes a image by relative path.
         /// </summary>

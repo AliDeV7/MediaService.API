@@ -25,7 +25,7 @@ namespace MediaService.Infrastructure.Validation
         /// <exception cref="FileSizeLimitException">Thrown when file exceeds the maximum allowed size</exception>
         public void ValidateFileSize(long fileSize)
         {
-            if (fileSize > _options.MaxFileSizeBytes)
+            //if (fileSize > _options.MaxFileSizeBytes)
                 throw new FileSizeLimitException("File size exceeds the allowed limit.");
         }
 
@@ -37,8 +37,8 @@ namespace MediaService.Infrastructure.Validation
         {
             var ext = Path.GetExtension(fileName);
 
-            if (string.IsNullOrWhiteSpace(ext) ||
-                !_options.AllowedExtensions.Contains(ext, StringComparer.OrdinalIgnoreCase))
+            //if (string.IsNullOrWhiteSpace(ext) ||
+                //!_options.AllowedExtensions.Contains(ext, StringComparer.OrdinalIgnoreCase))
                 throw new UnsupportedFileTypeException(ext ?? string.Empty);
         }
 

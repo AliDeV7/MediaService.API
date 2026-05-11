@@ -2,7 +2,7 @@
 using MediaService.Application.DTOs;
 using MediaService.Application.Interfaces;
 using MediaService.Core.Common;
-using MediaService.Core.Constants;
+using MediaService.Core.Configuration;
 using MediaService.Presentation.Api.Filters;
 using MediaService.Presentation.Api.ViewModels;
 using Microsoft.AspNetCore.Mvc;

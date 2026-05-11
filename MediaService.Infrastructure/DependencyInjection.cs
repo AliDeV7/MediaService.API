@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using MediaService.Infrastructure.Processing;
 using MediaService.Application.Interfaces;
 using MediaService.Infrastructure.Storage;
+using MediaService.Infrastructure.Services;
 
 namespace MediaService.Infrastructure
 {
@@ -32,6 +33,7 @@ namespace MediaService.Infrastructure
             services.AddScoped<IFileValidator, FileValidator>();
             services.AddScoped<IImageProcessor, ImageProcessor>();
             services.AddScoped<IStorageService, LocalStorageService>();
+            services.AddScoped<IMediaProcessingService, MediaProcessingService>();
 
             return services;
         }

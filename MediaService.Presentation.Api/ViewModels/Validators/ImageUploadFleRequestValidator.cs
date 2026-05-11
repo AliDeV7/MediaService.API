@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using MediaService.Core.Constants;
+using MediaService.Core.Configuration;
 
 namespace MediaService.Presentation.Api.ViewModels.Validators
 {

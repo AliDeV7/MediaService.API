@@ -198,6 +198,103 @@ namespace MediaService.Infrastructure.Helpers
             return $"{baseUrl.TrimEnd('/')}/{relativePath.Replace('\\', '/')}";
         }
 
+        /// <summary>
+        /// Computes SHA256 hash of the stream.
+        /// </summary>
+        /// <param name="stream">The stream to hash.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Lowercase hexadecimal hash string.</returns>
+        public static async Task<string> ComputeHashAsync(Stream stream, CancellationToken cancellationToken = default)
+        {
+            if (stream.CanSeek)
+            {
+                stream.Position = 0;
+            }
+
+            using var sha256 = SHA256.Create();
+            var hashBytes = await sha256.ComputeHashAsync(stream, cancellationToken);
+
+            // Reset stream position after hashing
+            if (stream.CanSeek)
+            {
+                stream.Position = 0;
+            }
+
+            return Convert.ToHexString(hashBytes).ToLowerInvariant();
+        }
+
+        /// <summary>
+        /// Determines the file extension based on conversion settings.
+        /// </summary>
+        /// <param name="fileName">Original file name.</param>
+        /// <param name="convertToWebP">Whether to convert to WebP format.</param>
+        /// <returns>File extension with leading dot.</returns>
+        public static string DetermineFileExtension(string fileName, bool convertToWebP)
+        {
+            if (convertToWebP)
+            {
+                return ".webp";
+            }
+
+            var extension = Path.GetExtension(fileName);
+            return string.IsNullOrWhiteSpace(extension) ? ".jpg" : extension;
+        }
+
+        /// <summary>
+        /// Converts Base64 string to a memory stream.
+        /// </summary>
+        /// <param name="base64Data">Base64 string (with or without data URI prefix).</param>
+        /// <returns>Memory stream containing the decoded bytes.</returns>
+        public static MemoryStream ConvertBase64ToStream(string base64Data)
+        {
+            // Remove data URI prefix if present (e.g., "data:image/png;base64,")
+            var base64String = base64Data.Contains(',')
+                ? base64Data.Split(',')[1]
+                : base64Data;
+
+            var bytes = Convert.FromBase64String(base64String);
+            return new MemoryStream(bytes);
+        }
+
+        /// <summary>
+        /// Generates save paths for main file and optional thumbnail.
+        /// </summary>
+        /// <param name="extension">File extension with leading dot.</param>
+        /// <param name="generateThumbnail">Whether to generate thumbnail path.</param>
+        /// <returns>Tuple of main path and optional thumbnail path.</returns>
+        public static (string MainPath, string? ThumbnailPath) GenerateSavePathsForImage(
+            string extension,
+            bool generateThumbnail)
+        {
+            var baseName = GenerateUniqueFileName();
+            var date = DateTime.UtcNow;
+
+            // Ensure extension has leading dot
+            var cleanExtension = extension.StartsWith(".") ? extension : $".{extension}";
+
+            // Use BuildImagePaths for WebP
+            if (cleanExtension.Equals(".webp", StringComparison.OrdinalIgnoreCase))
+            {
+                var (mainPath, thumbnailPath) = BuildImagePaths(baseName, date);
+                return (mainPath, generateThumbnail ? thumbnailPath : null);
+            }
+
+            // Use BuildFilePath for other formats
+            var (filePath, _) = BuildFilePath(baseName, cleanExtension, date);
+
+            // Generate thumbnail path with same extension if needed
+            string? thumbPath = null;
+            if (generateThumbnail)
+            {
+                var thumbBaseName = $"{GenerateUniqueFileName()}_thumb";
+                var (thumbnailPath, _) = BuildFilePath(thumbBaseName, cleanExtension, date);
+                thumbPath = thumbnailPath;
+            }
+
+            return (filePath, thumbPath);
+        }
+
+
         // ── Private helpers ──────────────────────────────────────────────────────
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿namespace MediaService.Core.Constants
+﻿namespace MediaService.Core.Configuration
 {
     /// <summary>
     /// Default values and constraints for image processing operations.
@@ -6,6 +6,11 @@
     /// </summary>
     public static class ImageProcessingDefaults
     {
+        /// <summary>
+        /// Configuration section name in appsettings.json.
+        /// </summary>
+        public const string SectionName = "ImageProcessing";
+
         /// <summary>
         /// Default width for thumbnail generation (in pixels).
         /// </summary>
@@ -45,6 +50,16 @@
         /// Maximum allowed quality value (1-100).
         /// </summary>
         public const int MaxQuality = 100;
+
+        /// <summary>
+        /// Supported output image formats for processing.
+        /// </summary>
+        public static readonly string[] SupportedOutputFormats = { "webp", "jpg", "jpeg", "png" };
+
+        /// <summary>
+        /// Default output format when conversion is enabled.
+        /// </summary>
+        public const string DefaultOutputFormat = "webp";
     }
 
 }
