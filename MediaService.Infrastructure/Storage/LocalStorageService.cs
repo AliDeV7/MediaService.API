@@ -154,10 +154,7 @@ namespace MediaService.Infrastructure.Storage
                 Url = GetPublicUrl(relativePath),
                 ThumbnailUrl = thumbnailRelativePath != null ? GetPublicUrl(thumbnailRelativePath) : null,
                 Hash = hash,
-                OriginalExtension = originalExtension,
-                Title = request.Title,
-                AltText = request.AltText,
-                SortingOrder = request.SortingOrder
+                OriginalExtension = originalExtension
             };
         }
 
@@ -212,13 +209,10 @@ namespace MediaService.Infrastructure.Storage
                 FileName = request.FileName,
                 ContentType = contentType,
                 FileSize = fileBytes.Length,
-                Title = request.Title,
-                AltText = request.AltText,
                 GenerateThumbnail = request.GenerateThumbnail,
                 ConvertToWebP = request.ConvertToWebP,
                 ThumbnailWidth = request.ThumbnailWidth,
                 WebPQuality = request.WebPQuality,
-                SortingOrder = request.SortingOrder
             };
 
             try

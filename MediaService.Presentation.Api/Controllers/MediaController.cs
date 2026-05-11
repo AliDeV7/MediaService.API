@@ -39,13 +39,10 @@ namespace MediaService.Presentation.Api.Controllers
                 FileName = viewModel.File.FileName,
                 ContentType = viewModel.File.ContentType,
                 FileSize = viewModel.File.Length,
-                Title = viewModel.Title,
-                AltText = viewModel.AltText,
                 GenerateThumbnail = viewModel.GenerateThumbnail,
                 ConvertToWebP = viewModel.ConvertToWebP,
                 ThumbnailWidth = viewModel.ThumbnailWidth,
-                WebPQuality = viewModel.WebPQuality,
-                SortingOrder = viewModel.SortingOrder
+                WebPQuality = viewModel.WebPQuality
             };
 
             var response = await _mediaUseCase.UploadFileAsync(request, cancellationToken);

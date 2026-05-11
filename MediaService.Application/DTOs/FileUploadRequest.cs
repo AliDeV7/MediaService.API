@@ -29,16 +29,6 @@
         public long FileSize { get; set; }
 
         /// <summary>
-        /// Optional title/description for the media file
-        /// </summary>
-        public string? Title { get; set; }
-
-        /// <summary>
-        /// Optional alt text for accessibility (images)
-        /// </summary>
-        public string? AltText { get; set; }
-
-        /// <summary>
         /// Whether to generate a thumbnail for images
         /// Default: true
         /// </summary>
@@ -61,10 +51,5 @@
         /// Default: 80
         /// </summary>
         public int WebPQuality { get; set; } = 80;
-
-        /// <summary>
-        /// Optional sorting order for display purposes
-        /// </summary>
-        public int? SortingOrder { get; set; }
     }
 }
