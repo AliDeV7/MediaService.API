@@ -149,6 +149,8 @@ namespace MediaService.Infrastructure.Storage
             return new MediaFile
             {
                 FileName = request.FileName,
+                Url = GetPublicUrl(relativePath),
+                ThumbnailUrl = thumbnailRelativePath != null ? GetPublicUrl(thumbnailRelativePath) : null,
                 FilePath = relativePath,
                 ThumbnailPath = thumbnailRelativePath,
                 FileSize = fileSize,
@@ -156,8 +158,6 @@ namespace MediaService.Infrastructure.Storage
                 Width = width,
                 Height = height,
                 UploadedAt = now,
-                Url = GetPublicUrl(relativePath),
-                ThumbnailUrl = thumbnailRelativePath != null ? GetPublicUrl(thumbnailRelativePath) : null,
                 Hash = hash,
                 OriginalExtension = originalExtension
             };

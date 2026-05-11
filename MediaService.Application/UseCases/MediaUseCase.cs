@@ -55,26 +55,32 @@ namespace MediaService.Application.UseCases
 
         /// <summary>
         /// Maps MediaFile entity to UploadResponse DTO.
+        /// Returns only client-facing information.
         /// </summary>
         private static UploadResponse MapToUploadResponse(MediaFile mediaFile)
         {
             return new UploadResponse
             {
-                FileName = mediaFile.FileName,
-                FilePath = mediaFile.FilePath,
+                // Relative paths (for client database storage)
+                RelativePath = mediaFile.Url,
+                ThumbnailRelativePath = mediaFile.ThumbnailUrl,
+
+                // Metadata (for client database storage)
                 FileType = mediaFile.MimeType,
                 FileSize = mediaFile.FileSize,
-                ThumbnailPath = mediaFile.ThumbnailPath,
-                ThumbnailFileName = mediaFile.ThumbnailPath is not null
-                    ? Path.GetFileName(mediaFile.ThumbnailPath)
-                    : null,
-                FileUrl = mediaFile.Url,
-                ThumbnailUrl = mediaFile.ThumbnailUrl,
-                Hash = mediaFile.Hash ?? string.Empty,
-                OriginalExtension = mediaFile.OriginalExtension ?? string.Empty,
+                Width = mediaFile.Width,
+                Height = mediaFile.Height,
+
+                // Identification & integrity
+                Hash = mediaFile.Hash,
+                OriginalFileName = mediaFile.FileName,
+                OriginalExtension = mediaFile.OriginalExtension,
+
+                // Timestamp
                 CreatedAt = mediaFile.UploadedAt
             };
         }
+
 
     }
 }

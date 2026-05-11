@@ -21,22 +21,22 @@ namespace MediaService.Infrastructure.Helpers
 
         /// <summary>
         /// Builds relative paths for the main WebP image and its thumbnail.
-        /// Format: media/{year}/{month}/{filename}.webp
+        /// Format: media/images/{year}/{month}/{filename}.webp
         /// </summary>
         /// <param name="baseName">Base filename without extension.</param>
         /// <param name="date">Date for directory structure.</param>
         /// <returns>Tuple containing main image path and thumbnail path.</returns>
         public static (string MainPath, string ThumbnailPath) BuildImagePaths(string baseName, DateTime date)
         {
-            var directory = BuildMediaDirectory(date);
+            var directory = BuildMediaDirectory("images", date);
             var mainPath = $"{directory}/{baseName}.webp";
             var thumbnailPath = $"{directory}/{baseName}_thumb.webp";
             return (mainPath, thumbnailPath);
         }
 
         /// <summary>
-        /// Builds the relative path for a non-image file.
-        /// Format: media/{year}/{month}/{filename}{extension}
+        /// Builds the relative path for a non-image file based on its type.
+        /// Format: media/{type}/{year}/{month}/{filename}{extension}
         /// </summary>
         /// <param name="baseName">Base filename without extension.</param>
         /// <param name="extension">File extension including the dot (e.g., ".pdf").</param>
@@ -47,7 +47,8 @@ namespace MediaService.Infrastructure.Helpers
             string extension,
             DateTime date)
         {
-            var directory = BuildMediaDirectory(date);
+            var mediaType = DetermineMediaType(extension);
+            var directory = BuildMediaDirectory(mediaType, date);
             var mainPath = $"{directory}/{baseName}{extension}";
             return (mainPath, null);
         }
@@ -179,26 +180,54 @@ namespace MediaService.Infrastructure.Helpers
         /// <summary>
         /// Constructs a public URL from a relative path and base URL.
         /// </summary>
-        /// <param name="baseUrl">Base URL (e.g., "https://yourdomain.com/uploads").</param>
+        /// <param name="baseUrl">Base URL (e.g., "https://cdn.aurora.com" or empty for relative).</param>
         /// <param name="relativePath">Relative path to the file.</param>
-        /// <returns>Complete public URL.</returns>
+        /// <returns>Complete public URL or relative path.</returns>
         public static string BuildPublicUrl(string baseUrl, string relativePath)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(baseUrl);
             ArgumentException.ThrowIfNullOrWhiteSpace(relativePath);
 
+            // If baseUrl is empty, return relative path with leading slash
+            if (string.IsNullOrWhiteSpace(baseUrl))
+            {
+                var normalizedPath = relativePath.Replace('\\', '/');
+                return normalizedPath.StartsWith('/') ? normalizedPath : $"/{normalizedPath}";
+            }
+
+            // Otherwise, combine baseUrl with relative path
             return $"{baseUrl.TrimEnd('/')}/{relativePath.Replace('\\', '/')}";
         }
 
         // ── Private helpers ──────────────────────────────────────────────────────
 
         /// <summary>
-        /// Builds the media directory path based on date.
-        /// Format: media/{year}/{month}
+        /// Builds the media directory path based on media type and date.
+        /// Format: media/{type}/{year}/{month}
         /// </summary>
-        private static string BuildMediaDirectory(DateTime date)
+        /// <param name="mediaType">Type of media (images, videos, documents, audio).</param>
+        /// <param name="date">Date for directory structure.</param>
+        /// <returns>Directory path string.</returns>
+        private static string BuildMediaDirectory(string mediaType, DateTime date)
         {
-            return $"media/{date.Year}/{date.Month:D2}";
+            return $"media/{mediaType}/{date.Year}/{date.Month:D2}";
+        }
+
+        /// <summary>
+        /// Determines the media type category based on file extension.
+        /// </summary>
+        /// <param name="extension">File extension including the dot (e.g., ".pdf").</param>
+        /// <returns>Media type category string.</returns>
+        private static string DetermineMediaType(string extension)
+        {
+            return extension.ToLowerInvariant() switch
+            {
+                ".jpg" or ".jpeg" or ".png" or ".gif" or ".webp" or ".bmp" or ".svg" => "images",
+                ".mp4" or ".avi" or ".mov" or ".wmv" or ".flv" or ".mkv" => "videos",
+                ".mp3" or ".wav" or ".ogg" or ".flac" or ".aac" => "audio",
+                ".pdf" or ".doc" or ".docx" or ".txt" or ".xls" or ".xlsx" or ".ppt" or ".pptx" => "documents",
+                _ => "others"
+            };
         }
     }
+
 }
