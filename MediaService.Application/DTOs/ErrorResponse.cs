@@ -1,4 +1,4 @@
-﻿namespace MediaService.Core.DTOs
+﻿namespace MediaService.Application.DTOs
 {
     /// <summary>
     /// Standard error response model

@@ -1,9 +1,11 @@
-﻿using MediaService.Core.Interfaces;
-using MediaService.Infrastructure.Options;
+﻿using MediaService.Infrastructure.Options;
 using MediaService.Infrastructure.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using MediaService.Infrastructure.Processing;
+using MediaService.Application.Interfaces;
+using MediaService.Infrastructure.Storage;
+using MediaService.Infrastructure.Services;
 
 namespace MediaService.Infrastructure
 {
@@ -30,6 +32,8 @@ namespace MediaService.Infrastructure
             // Register file-related services
             services.AddScoped<IFileValidator, FileValidator>();
             services.AddScoped<IImageProcessor, ImageProcessor>();
+            services.AddScoped<IStorageService, LocalStorageService>();
+            services.AddScoped<IMediaProcessingService, MediaProcessingService>();
 
             return services;
         }

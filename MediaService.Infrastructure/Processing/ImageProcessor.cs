@@ -1,4 +1,4 @@
-﻿using MediaService.Core.Interfaces;
+﻿using MediaService.Application.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.PixelFormats;

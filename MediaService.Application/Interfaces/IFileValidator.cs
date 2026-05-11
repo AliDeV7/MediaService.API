@@ -1,6 +1,6 @@
 ﻿using MediaService.Core.Enums;
 
-namespace MediaService.Core.Interfaces
+namespace MediaService.Application.Interfaces
 {
     /// <summary>
     /// Interface for file validation operations

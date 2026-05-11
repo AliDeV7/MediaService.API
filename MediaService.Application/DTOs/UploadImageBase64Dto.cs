@@ -1,32 +1,24 @@
-﻿namespace MediaService.Core.DTOs
+﻿namespace MediaService.Application.DTOs
 {
-
     /// <summary>
-    /// Request model for file upload using stream (multipart/form-data)
-    /// This is the RECOMMENDED and most efficient method for file uploads
+    /// Request model for base64 file upload (JSON payload)
+    /// Use this when client cannot send multipart/form-data (e.g., some AJAX scenarios)
+    /// Note: Base64 encoding increases payload size by ~33%, use FileUploadRequest when possible
     /// </summary>
-    public class FileUploadRequest
+    public class UploadImageBase64Dto
     {
         /// <summary>
-        /// File content as stream
+        /// Base64-encoded file data
+        /// Can include data URI prefix (e.g., "data:image/png;base64,iVBORw0KG...")
+        /// or just the base64 string
         /// </summary>
-        public Stream FileStream { get; set; } = null!;
+        public string Base64Data { get; set; } = string.Empty;
 
         /// <summary>
-        /// Original file name (required to determine file type)
+        /// Original file name (required for base64 uploads to determine file type)
         /// Example: "image.png", "document.pdf"
         /// </summary>
         public string FileName { get; set; } = string.Empty;
-
-        /// <summary>
-        /// MIME type of the file (e.g., "image/png", "application/pdf")
-        /// </summary>
-        public string ContentType { get; set; } = string.Empty;
-
-        /// <summary>
-        /// File size in bytes
-        /// </summary>
-        public long FileSize { get; set; }
 
         /// <summary>
         /// Optional title/description for the media file
