@@ -14,21 +14,21 @@
         /// <summary>
         /// Whether to generate a thumbnail for images.
         /// </summary>
-        public bool GenerateThumbnail { get; set; } = true;
+        public bool? GenerateThumbnail { get; set; }
 
         /// <summary>
         /// Whether to convert images to WebP format.
         /// </summary>
-        public bool ConvertToWebP { get; set; } = true;
+        public bool? ConvertToWebP { get; set; }
 
         /// <summary>
         /// Thumbnail width in pixels.
         /// </summary>
-        public int ThumbnailWidth { get; set; } = 400;
+        public int? ThumbnailWidth { get; set; }
 
         /// <summary>
         /// WebP compression quality (1-100).
         /// </summary>
-        public int WebPQuality { get; set; } = 80;
+        public int? WebPQuality { get; set; }
     }
 }

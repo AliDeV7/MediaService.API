@@ -1,7 +1,8 @@
 ﻿namespace MediaService.Infrastructure.Options
 {
     /// <summary>
-    /// Configuration options for file storage.
+    /// Configuration options for file storage and validation.
+    /// This is the single source of truth for all file-related constraints.
     /// </summary>
     public sealed class FileStorageOptions
     {
@@ -24,25 +25,26 @@
 
         /// <summary>
         /// Maximum allowed file size in bytes.
-        /// Default: 10 MB
+        /// Default: 50 MB
         /// </summary>
-        public long MaxFileSizeBytes { get; set; } = 10 * 1024 * 1024;
+        public long MaxFileSizeBytes { get; set; } = 50 * 1024 * 1024;
 
         /// <summary>
         /// Allowed file extensions (lowercase, with dot).
         /// </summary>
         public HashSet<string> AllowedExtensions { get; set; } = new()
         {
-            ".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp",
-            ".pdf", ".doc", ".docx", ".txt",
-            ".mp4", ".avi", ".mov", ".mkv"
+            ".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg",
+            ".pdf", ".doc", ".docx", ".txt", ".xls", ".xlsx", ".ppt", ".pptx",
+            ".mp4", ".avi", ".mov", ".wmv", ".flv", ".mkv",
+            ".mp3", ".wav", ".ogg", ".flac", ".aac"
         };
 
         /// <summary>
         /// Quality for WebP image conversion (1-100).
-        /// Default: 85
+        /// Default: 80
         /// </summary>
-        public int ImageQuality { get; set; } = 85;
+        public int ImageQuality { get; set; } = 80;
 
         /// <summary>
         /// Maximum dimension (width/height) for thumbnail generation.

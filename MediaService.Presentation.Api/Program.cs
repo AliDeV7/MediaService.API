@@ -1,5 +1,6 @@
 using MediaService.Application;
 using MediaService.Infrastructure;
+using MediaService.Presentation.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,9 @@ builder.Services.AddApplicationServices();
 
 // Register Infrastructure layer services
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Register Presentation layer services
+builder.Services.AddPresentationServices();
 
 // Configure Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();

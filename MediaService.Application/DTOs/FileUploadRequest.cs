@@ -1,6 +1,7 @@
-﻿namespace MediaService.Application.DTOs
-{
+﻿using MediaService.Core.Constants;
 
+namespace MediaService.Application.DTOs
+{
     /// <summary>
     /// Request model for file upload using stream (multipart/form-data)
     /// This is the RECOMMENDED and most efficient method for file uploads
@@ -29,27 +30,25 @@
         public long FileSize { get; set; }
 
         /// <summary>
-        /// Whether to generate a thumbnail for images
+        /// Whether to generate a thumbnail for images.
         /// Default: true
         /// </summary>
-        public bool GenerateThumbnail { get; set; } = true;
+        public bool GenerateThumbnail { get; set; } = MediaServiceConstants.DefaultGenerateThumbnail;
 
         /// <summary>
-        /// Whether to convert images to WebP format for better compression
+        /// Whether to convert images to WebP format for better compression.
         /// Default: true
         /// </summary>
-        public bool ConvertToWebP { get; set; } = true;
+        public bool ConvertToWebP { get; set; } = MediaServiceConstants.DefaultConvertToWebP;
 
         /// <summary>
-        /// Thumbnail width in pixels (height will be calculated to maintain aspect ratio)
-        /// Default: 400px
+        /// Thumbnail width in pixels (height will be calculated to maintain aspect ratio).
         /// </summary>
-        public int ThumbnailWidth { get; set; } = 400;
+        public int ThumbnailWidth { get; set; } = MediaServiceConstants.DefaultThumbnailWidth;
 
         /// <summary>
-        /// WebP compression quality (1-100, higher = better quality but larger file)
-        /// Default: 80
+        /// WebP compression quality (1-100, higher = better quality but larger file).
         /// </summary>
-        public int WebPQuality { get; set; } = 80;
+        public int WebPQuality { get; set; } = MediaServiceConstants.DefaultWebPQuality;
     }
 }
