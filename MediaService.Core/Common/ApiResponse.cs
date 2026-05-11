@@ -24,7 +24,7 @@
         /// <summary>
         /// Timestamp of the response
         /// </summary>
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        public long Timestamp { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
         /// <summary>
         /// Creates a successful response

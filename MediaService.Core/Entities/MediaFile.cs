@@ -44,7 +44,7 @@
         /// <summary>
         /// When the file was uploaded
         /// </summary>
-        public DateTime UploadedAt { get; set; }
+        public long UploadedAt { get; set; }
 
         /// <summary>
         /// Full public URL to access the file

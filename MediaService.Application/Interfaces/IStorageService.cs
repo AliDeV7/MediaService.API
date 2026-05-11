@@ -17,7 +17,7 @@ namespace MediaService.Application.Interfaces
         /// <param name="request">File upload request containing file and metadata.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>MediaFile entity with file metadata.</returns>
-        Task<MediaFile> SaveFileAsync(UploadFileRequest request, CancellationToken cancellationToken = default);
+        Task<MediaFile> SaveFileAsync(UploadImageFileDto request, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Saves file from base64 string (for backward compatibility).
@@ -27,7 +27,7 @@ namespace MediaService.Application.Interfaces
         /// <param name="request">Base64 upload request containing encoded data and metadata.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>MediaFile entity with file metadata.</returns>
-        Task<MediaFile> SaveFileAsync(UploadBase64Request request, CancellationToken cancellationToken = default);
+        Task<MediaFile> SaveFileAsync(UploadImageBase64Dto request, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Retrieves file content as stream for efficient memory usage.

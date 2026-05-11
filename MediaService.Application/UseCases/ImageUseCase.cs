@@ -5,23 +5,23 @@ using MediaService.Core.Entities;
 namespace MediaService.Application.UseCases
 {
     /// <summary>
-    /// Implements media file operations use cases.
+    /// Implements Image file operations use cases.
     /// Orchestrates storage service and maps between DTOs and entities.
     /// </summary>
-    public sealed class MediaUseCase : IMediaUseCase
+    public sealed class ImageUseCase : IImageUseCase
     {
         private readonly IStorageService _storageService;
 
-        public MediaUseCase(IStorageService storageService)
+        public ImageUseCase(IStorageService storageService)
         {
             _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         }
 
         /// <summary>
-        /// Uploads a single file with optional image processing.
+        /// Uploads a single Image with optional image processing.
         /// </summary>
-        public async Task<UploadResponse> UploadFileAsync(
-            UploadFileRequest request,
+        public async Task<UploadResponseDto> UploadFileAsync(
+            UploadImageFileDto request,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(request);
@@ -57,9 +57,9 @@ namespace MediaService.Application.UseCases
         /// Maps MediaFile entity to UploadResponse DTO.
         /// Returns only client-facing information.
         /// </summary>
-        private static UploadResponse MapToUploadResponse(MediaFile mediaFile)
+        private static UploadResponseDto MapToUploadResponse(MediaFile mediaFile)
         {
-            return new UploadResponse
+            return new UploadResponseDto
             {
                 // Relative paths (for client database storage)
                 RelativePath = mediaFile.Url,

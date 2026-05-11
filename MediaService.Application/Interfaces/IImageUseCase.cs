@@ -2,25 +2,24 @@
 
 namespace MediaService.Application.Interfaces
 {
-
     /// <summary>
-    /// Defines media file operations use cases.
+    /// Defines image operations use cases.
     /// Accepts framework-agnostic DTOs only.
     /// </summary>
-    public interface IMediaUseCase
+    public interface IImageUseCase
     {
         /// <summary>
-        /// Uploads a single file with optional image processing.
+        /// Uploads a single image file with optional image processing.
         /// </summary>
         /// <param name="request">File upload request containing stream and metadata.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Upload response with file metadata and URLs.</returns>
-        Task<UploadResponse> UploadFileAsync(
-            UploadFileRequest request,
+        Task<UploadResponseDto> UploadFileAsync(
+            UploadImageFileDto request,
             CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Deletes a file by relative path.
+        /// Deletes a image by relative path.
         /// </summary>
         /// <param name="relativePath">Relative file path.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
@@ -30,7 +29,7 @@ namespace MediaService.Application.Interfaces
             CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Checks if a file exists in storage.
+        /// Checks if a image exists in storage.
         /// </summary>
         /// <param name="relativePath">Relative file path.</param>
         /// <param name="cancellationToken">Cancellation token.</param>

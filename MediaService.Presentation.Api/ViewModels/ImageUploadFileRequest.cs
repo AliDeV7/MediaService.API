@@ -4,7 +4,7 @@
     /// View model for media file upload from HTTP multipart/form-data request.
     /// Contains framework-specific IFormFile type.
     /// </summary>
-    public class MediaUploadRequest
+    public class ImageUploadFileRequest
     {
         /// <summary>
         /// File from multipart/form-data request.

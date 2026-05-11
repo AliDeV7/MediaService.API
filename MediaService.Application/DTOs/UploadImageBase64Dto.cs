@@ -5,7 +5,7 @@
     /// Use this when client cannot send multipart/form-data (e.g., some AJAX scenarios)
     /// Note: Base64 encoding increases payload size by ~33%, use FileUploadRequest when possible
     /// </summary>
-    public class UploadBase64Request
+    public class UploadImageBase64Dto
     {
         /// <summary>
         /// Base64-encoded file data

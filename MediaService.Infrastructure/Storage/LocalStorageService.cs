@@ -41,7 +41,7 @@ namespace MediaService.Infrastructure.Storage
         /// Automatically converts images to WebP and generates thumbnails.
         /// </summary>
         public async Task<MediaFile> SaveFileAsync(
-            UploadFileRequest request,
+            UploadImageFileDto request,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(request);
@@ -52,6 +52,7 @@ namespace MediaService.Infrastructure.Storage
             ValidateResolvedBusinessRules(request);
 
             var now = DateTime.UtcNow;
+            var nowUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var originalExtension = Path.GetExtension(request.FileName).ToLowerInvariant();
 
             // Validate file
@@ -157,7 +158,7 @@ namespace MediaService.Infrastructure.Storage
                 MimeType = isImage && request.ConvertToWebP ? "image/webp" : request.ContentType,
                 Width = width,
                 Height = height,
-                UploadedAt = now,
+                UploadedAt = nowUnixTime,
                 Hash = hash,
                 OriginalExtension = originalExtension
             };
@@ -170,7 +171,7 @@ namespace MediaService.Infrastructure.Storage
         /// Automatically converts images to WebP and generates thumbnails.
         /// </summary>
         public async Task<MediaFile> SaveFileAsync(
-            UploadBase64Request request,
+            UploadImageBase64Dto request,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(request);
@@ -208,7 +209,7 @@ namespace MediaService.Infrastructure.Storage
             };
 
             // Create FileUploadRequest from decoded data
-            var fileUploadRequest = new UploadFileRequest
+            var fileUploadRequest = new UploadImageFileDto
             {
                 FileStream = new MemoryStream(fileBytes),
                 FileName = request.FileName,
@@ -308,29 +309,29 @@ namespace MediaService.Infrastructure.Storage
         /// </summary>
         /// <param name="request">Upload request with resolved values.</param>
         /// <exception cref="ValidationException">Thrown when business rules are violated.</exception>
-        private void ValidateResolvedBusinessRules(UploadFileRequest request)
+        private void ValidateResolvedBusinessRules(UploadImageFileDto request)
         {
             // Validate thumbnail width (after default applied)
             if (request.GenerateThumbnail)
             {
-                if (request.ThumbnailWidth < MediaServiceConstants.MinThumbnailWidth ||
-                    request.ThumbnailWidth > MediaServiceConstants.MaxThumbnailWidth)
+                if (request.ThumbnailWidth < ImageProcessingDefaults.MinThumbnailWidth ||
+                    request.ThumbnailWidth > ImageProcessingDefaults.MaxThumbnailWidth)
                 {
                     throw new ValidationException(
-                        $"Thumbnail width must be between {MediaServiceConstants.MinThumbnailWidth} " +
-                        $"and {MediaServiceConstants.MaxThumbnailWidth} pixels.");
+                        $"Thumbnail width must be between {ImageProcessingDefaults.MinThumbnailWidth} " +
+                        $"and {ImageProcessingDefaults.MaxThumbnailWidth} pixels.");
                 }
             }
 
             // Validate WebP quality (after default applied)
             if (request.ConvertToWebP)
             {
-                if (request.WebPQuality < MediaServiceConstants.MinQuality ||
-                    request.WebPQuality > MediaServiceConstants.MaxQuality)
+                if (request.WebPQuality < ImageProcessingDefaults.MinQuality ||
+                    request.WebPQuality > ImageProcessingDefaults.MaxQuality)
                 {
                     throw new ValidationException(
-                        $"WebP quality must be between {MediaServiceConstants.MinQuality} " +
-                        $"and {MediaServiceConstants.MaxQuality}.");
+                        $"WebP quality must be between {ImageProcessingDefaults.MinQuality} " +
+                        $"and {ImageProcessingDefaults.MaxQuality}.");
                 }
             }
         }

@@ -4,14 +4,14 @@ using MediaService.Core.Constants;
 namespace MediaService.Presentation.Api.ViewModels.Validators
 {
     /// <summary>
-    /// Validator for MediaUploadRequest ViewModel.
+    /// Validator for ImageUploadFileRequest ViewModel.
     /// Validates HTTP-specific concerns and optional parameter ranges when provided.
     /// Business rules (file size, type, content) are validated in the Infrastructure layer.
     /// Default value validation happens in Use Case after defaults are applied.
     /// </summary>
-    public class MediaUploadRequestValidator : AbstractValidator<MediaUploadRequest>
+    public class ImageUploadFleRequestValidator : AbstractValidator<ImageUploadFileRequest>
     {
-        public MediaUploadRequestValidator()
+        public ImageUploadFleRequestValidator()
         {
             // File presence validation
             RuleFor(x => x.File)
@@ -26,16 +26,16 @@ namespace MediaService.Presentation.Api.ViewModels.Validators
             // Optional parameter range validation - only when values are provided
             RuleFor(x => x.ThumbnailWidth)
                 .InclusiveBetween(
-                    MediaServiceConstants.MinThumbnailWidth,
-                    MediaServiceConstants.MaxThumbnailWidth)
-                .WithMessage($"Thumbnail width must be between {MediaServiceConstants.MinThumbnailWidth} and {MediaServiceConstants.MaxThumbnailWidth} pixels.")
+                    ImageProcessingDefaults.MinThumbnailWidth,
+                    ImageProcessingDefaults.MaxThumbnailWidth)
+                .WithMessage($"Thumbnail width must be between {ImageProcessingDefaults.MinThumbnailWidth} and {ImageProcessingDefaults.MaxThumbnailWidth} pixels.")
                 .When(x => x.ThumbnailWidth.HasValue);
 
             RuleFor(x => x.WebPQuality)
                 .InclusiveBetween(
-                    MediaServiceConstants.MinQuality,
-                    MediaServiceConstants.MaxQuality)
-                .WithMessage($"WebP quality must be between {MediaServiceConstants.MinQuality} and {MediaServiceConstants.MaxQuality}.")
+                    ImageProcessingDefaults.MinQuality,
+                    ImageProcessingDefaults.MaxQuality)
+                .WithMessage($"WebP quality must be between {ImageProcessingDefaults.MinQuality} and {ImageProcessingDefaults.MaxQuality}.")
                 .When(x => x.WebPQuality.HasValue);
         }
     }

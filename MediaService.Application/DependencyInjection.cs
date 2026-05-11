@@ -14,7 +14,7 @@ namespace MediaService.Application
         /// </summary>
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<IMediaUseCase, MediaUseCase>();
+            services.AddScoped<IImageUseCase, ImageUseCase>();
 
             return services;
         }

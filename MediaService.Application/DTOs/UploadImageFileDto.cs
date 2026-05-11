@@ -5,7 +5,7 @@
     /// This is the RECOMMENDED and most efficient method for file uploads.
     /// Default values are applied during mapping from ViewModel.
     /// </summary>
-    public class UploadFileRequest
+    public class UploadImageFileDto
     {
         /// <summary>
         /// File content as stream

@@ -4,7 +4,7 @@
     /// Response model for successful file upload.
     /// Contains only essential information needed by clients.
     /// </summary>
-    public class UploadResponse
+    public class UploadResponseDto
     {
         /// <summary>
         /// Complete relative path from storage root (e.g., "/media/2026/05/abc123.webp")
@@ -56,6 +56,6 @@
         /// <summary>
         /// When the file was uploaded
         /// </summary>
-        public DateTime CreatedAt { get; set; }
+        public long CreatedAt { get; set; }
     }
 }

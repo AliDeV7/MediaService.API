@@ -15,13 +15,13 @@
         /// Root directory path for storing uploaded files.
         /// Default: "wwwroot/uploads"
         /// </summary>
-        public string StorageRootPath { get; set; } = Path.Combine("wwwroot", "uploads");
+        public string StorageRootPath { get; set; } = Path.Combine("wwwroot");
 
         /// <summary>
         /// Base URL for constructing public file URLs.
         /// Example: "https://yourdomain.com/uploads"
         /// </summary>
-        public string BaseUrl { get; set; } = "/uploads";
+        public string BaseUrl { get; set; } = "";
 
         /// <summary>
         /// Maximum allowed file size in bytes.
