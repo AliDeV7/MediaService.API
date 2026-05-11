@@ -21,7 +21,7 @@ namespace MediaService.Application.UseCases
         /// Uploads a single file with optional image processing.
         /// </summary>
         public async Task<UploadResponse> UploadFileAsync(
-            FileUploadRequest request,
+            UploadFileRequest request,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(request);

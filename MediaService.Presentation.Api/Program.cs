@@ -1,6 +1,7 @@
 using MediaService.Application;
 using MediaService.Infrastructure;
 using MediaService.Presentation.Api;
+using MediaService.Presentation.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,9 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Register Global Exception Handler (MUST be first) 
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())

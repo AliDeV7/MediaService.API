@@ -19,12 +19,12 @@
         /// <summary>
         /// Default value for thumbnail generation.
         /// </summary>
-        public const bool DefaultGenerateThumbnail = true;
+        public const bool DefaultGenerateThumbnail = false;
 
         /// <summary>
         /// Default value for WebP conversion.
         /// </summary>
-        public const bool DefaultConvertToWebP = true;
+        public const bool DefaultConvertToWebP = false;
 
         /// <summary>
         /// Minimum allowed thumbnail width (in pixels).

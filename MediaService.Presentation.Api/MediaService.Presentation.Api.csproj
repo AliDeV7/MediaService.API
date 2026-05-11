@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Middleware\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MediaService.Application\MediaService.Application.csproj" />
     <ProjectReference Include="..\MediaService.Infrastructure\MediaService.Infrastructure.csproj" />
   </ItemGroup>

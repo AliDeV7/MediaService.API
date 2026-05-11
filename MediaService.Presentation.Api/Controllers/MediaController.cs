@@ -4,6 +4,8 @@ using MediaService.Core.Constants;
 using MediaService.Presentation.Api.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
+using MediaService.Core.Common;
+using MediaService.Presentation.Api.Filters;
 
 namespace MediaService.Presentation.Api.Controllers
 {
@@ -34,26 +36,16 @@ namespace MediaService.Presentation.Api.Controllers
         /// <returns>Upload response with file metadata and URLs.</returns>
         [HttpPost("upload")]
         [Consumes("multipart/form-data")]
+        [ValidateWithFluentValidation<MediaUploadRequest>]
+        [ProducesResponseType(typeof(ApiResponse<UploadResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+
         public async Task<IActionResult> UploadFile(
             [FromForm] MediaUploadRequest viewModel,
             CancellationToken cancellationToken)
         {
-            // Validate the request
-            var validationResult = await _validator.ValidateAsync(viewModel, cancellationToken);
-
-            if (!validationResult.IsValid)
-            {
-                // Add errors to ModelState
-                foreach (var error in validationResult.Errors)
-                {
-                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-                }
-
-                return BadRequest(ModelState);
-            }
-
             // Map ViewModel (Presentation) → DTO (Core) with default values
-            var request = new FileUploadRequest
+            var request = new UploadFileRequest
             {
                 FileStream = viewModel.File.OpenReadStream(),
                 FileName = viewModel.File.FileName,
@@ -67,7 +59,7 @@ namespace MediaService.Presentation.Api.Controllers
 
             var response = await _mediaUseCase.UploadFileAsync(request, cancellationToken);
 
-            return Ok(response);
+            return Ok(ApiResponse<UploadResponse>.SuccessResponse(response));
         }
 
         /// <summary>
@@ -75,8 +67,10 @@ namespace MediaService.Presentation.Api.Controllers
         /// </summary>
         /// <param name="relativePath">Relative file path.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns>204 No Content if deleted, 404 if not found.</returns>
+        /// <returns>Success response if deleted, 404 if not found.</returns>
         [HttpDelete("{*relativePath}")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteFile(
             string relativePath,
             CancellationToken cancellationToken)
@@ -85,11 +79,19 @@ namespace MediaService.Presentation.Api.Controllers
 
             if (!deleted)
             {
-                return NotFound();
+                var errorResponse = ApiResponse<object>.FailureResponse(
+                    "FILE_NOT_FOUND",
+                    $"File not found: {relativePath}"
+                );
+
+                return NotFound(errorResponse);
             }
 
-            return NoContent();
+            var successResponse = ApiResponse<object>.SuccessResponse(
+                new { Message = "File deleted successfully", Path = relativePath }
+            );
+
+            return Ok(successResponse);
         }
     }
-
 }

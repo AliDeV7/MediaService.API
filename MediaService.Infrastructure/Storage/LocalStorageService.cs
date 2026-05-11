@@ -1,9 +1,11 @@
 ﻿using MediaService.Application.DTOs;
 using MediaService.Application.Interfaces;
+using MediaService.Core.Constants;
 using MediaService.Core.Entities;
 using MediaService.Infrastructure.Helpers;
 using MediaService.Infrastructure.Options;
 using Microsoft.Extensions.Options;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 
 namespace MediaService.Infrastructure.Storage
@@ -39,12 +41,15 @@ namespace MediaService.Infrastructure.Storage
         /// Automatically converts images to WebP and generates thumbnails.
         /// </summary>
         public async Task<MediaFile> SaveFileAsync(
-            FileUploadRequest request,
+            UploadFileRequest request,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentNullException.ThrowIfNull(request.FileStream);
             ArgumentException.ThrowIfNullOrWhiteSpace(request.FileName);
+
+            // Validate business rules on resolved values
+            ValidateResolvedBusinessRules(request);
 
             var now = DateTime.UtcNow;
             var originalExtension = Path.GetExtension(request.FileName).ToLowerInvariant();
@@ -165,7 +170,7 @@ namespace MediaService.Infrastructure.Storage
         /// Automatically converts images to WebP and generates thumbnails.
         /// </summary>
         public async Task<MediaFile> SaveFileAsync(
-            Base64UploadRequest request,
+            UploadBase64Request request,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(request);
@@ -203,7 +208,7 @@ namespace MediaService.Infrastructure.Storage
             };
 
             // Create FileUploadRequest from decoded data
-            var fileUploadRequest = new FileUploadRequest
+            var fileUploadRequest = new UploadFileRequest
             {
                 FileStream = new MemoryStream(fileBytes),
                 FileName = request.FileName,
@@ -296,6 +301,38 @@ namespace MediaService.Infrastructure.Storage
             var hash = await MD5.HashDataAsync(stream, cancellationToken);
             stream.Position = 0;
             return Convert.ToHexString(hash).ToLowerInvariant();
+        }
+
+        /// <summary>
+        /// Validates business rules on resolved parameter values after defaults have been applied.
+        /// </summary>
+        /// <param name="request">Upload request with resolved values.</param>
+        /// <exception cref="ValidationException">Thrown when business rules are violated.</exception>
+        private void ValidateResolvedBusinessRules(UploadFileRequest request)
+        {
+            // Validate thumbnail width (after default applied)
+            if (request.GenerateThumbnail)
+            {
+                if (request.ThumbnailWidth < MediaServiceConstants.MinThumbnailWidth ||
+                    request.ThumbnailWidth > MediaServiceConstants.MaxThumbnailWidth)
+                {
+                    throw new ValidationException(
+                        $"Thumbnail width must be between {MediaServiceConstants.MinThumbnailWidth} " +
+                        $"and {MediaServiceConstants.MaxThumbnailWidth} pixels.");
+                }
+            }
+
+            // Validate WebP quality (after default applied)
+            if (request.ConvertToWebP)
+            {
+                if (request.WebPQuality < MediaServiceConstants.MinQuality ||
+                    request.WebPQuality > MediaServiceConstants.MaxQuality)
+                {
+                    throw new ValidationException(
+                        $"WebP quality must be between {MediaServiceConstants.MinQuality} " +
+                        $"and {MediaServiceConstants.MaxQuality}.");
+                }
+            }
         }
     }
 }

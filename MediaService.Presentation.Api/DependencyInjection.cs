@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using MediaService.Presentation.Api.ViewModels.Validators;
 using MediaService.Presentation.Api.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using MediaService.Presentation.Api.Filters;
 
 namespace MediaService.Presentation.Api
 {
@@ -18,6 +20,15 @@ namespace MediaService.Presentation.Api
         {
             // Register FluentValidation validators
             services.AddScoped<IValidator<MediaUploadRequest>, MediaUploadRequestValidator>();
+
+            // Register the filter as scoped
+            services.AddScoped(typeof(FluentValidationFilter<>));
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                // Disable automatic model validation
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             return services;
         }

@@ -5,8 +5,9 @@ namespace MediaService.Presentation.Api.ViewModels.Validators
 {
     /// <summary>
     /// Validator for MediaUploadRequest ViewModel.
-    /// Validates HTTP-specific concerns and optional parameter ranges.
+    /// Validates HTTP-specific concerns and optional parameter ranges when provided.
     /// Business rules (file size, type, content) are validated in the Infrastructure layer.
+    /// Default value validation happens in Use Case after defaults are applied.
     /// </summary>
     public class MediaUploadRequestValidator : AbstractValidator<MediaUploadRequest>
     {
@@ -22,7 +23,7 @@ namespace MediaService.Presentation.Api.ViewModels.Validators
                 .WithMessage("File cannot be empty.")
                 .When(x => x.File != null);
 
-            // Optional parameter range validation
+            // Optional parameter range validation - only when values are provided
             RuleFor(x => x.ThumbnailWidth)
                 .InclusiveBetween(
                     MediaServiceConstants.MinThumbnailWidth,
@@ -38,4 +39,5 @@ namespace MediaService.Presentation.Api.ViewModels.Validators
                 .When(x => x.WebPQuality.HasValue);
         }
     }
+
 }

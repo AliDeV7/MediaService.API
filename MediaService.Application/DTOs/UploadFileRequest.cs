@@ -1,12 +1,11 @@
-﻿using MediaService.Core.Constants;
-
-namespace MediaService.Application.DTOs
+﻿namespace MediaService.Application.DTOs
 {
     /// <summary>
-    /// Request model for file upload using stream (multipart/form-data)
-    /// This is the RECOMMENDED and most efficient method for file uploads
+    /// Request model for file upload using stream (multipart/form-data).
+    /// This is the RECOMMENDED and most efficient method for file uploads.
+    /// Default values are applied during mapping from ViewModel.
     /// </summary>
-    public class FileUploadRequest
+    public class UploadFileRequest
     {
         /// <summary>
         /// File content as stream
@@ -14,7 +13,7 @@ namespace MediaService.Application.DTOs
         public Stream FileStream { get; set; } = null!;
 
         /// <summary>
-        /// Original file name (required to determine file type)
+        /// Original file name (required to determine file type).
         /// Example: "image.png", "document.pdf"
         /// </summary>
         public string FileName { get; set; } = string.Empty;
@@ -31,24 +30,27 @@ namespace MediaService.Application.DTOs
 
         /// <summary>
         /// Whether to generate a thumbnail for images.
-        /// Default: true
+        /// Default is applied during mapping if not provided.
         /// </summary>
-        public bool GenerateThumbnail { get; set; } = MediaServiceConstants.DefaultGenerateThumbnail;
+        public bool GenerateThumbnail { get; set; }
 
         /// <summary>
         /// Whether to convert images to WebP format for better compression.
-        /// Default: true
+        /// Default is applied during mapping if not provided.
         /// </summary>
-        public bool ConvertToWebP { get; set; } = MediaServiceConstants.DefaultConvertToWebP;
+        public bool ConvertToWebP { get; set; }
 
         /// <summary>
         /// Thumbnail width in pixels (height will be calculated to maintain aspect ratio).
+        /// Default is applied during mapping if not provided.
         /// </summary>
-        public int ThumbnailWidth { get; set; } = MediaServiceConstants.DefaultThumbnailWidth;
+        public int ThumbnailWidth { get; set; }
 
         /// <summary>
         /// WebP compression quality (1-100, higher = better quality but larger file).
+        /// Default is applied during mapping if not provided.
         /// </summary>
-        public int WebPQuality { get; set; } = MediaServiceConstants.DefaultWebPQuality;
+        public int WebPQuality { get; set; }
     }
+
 }

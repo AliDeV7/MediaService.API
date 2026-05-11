@@ -16,7 +16,7 @@ namespace MediaService.Application.Interfaces
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Upload response with file metadata and URLs.</returns>
         Task<UploadResponse> UploadFileAsync(
-            FileUploadRequest request,
+            UploadFileRequest request,
             CancellationToken cancellationToken = default);
 
         /// <summary>
