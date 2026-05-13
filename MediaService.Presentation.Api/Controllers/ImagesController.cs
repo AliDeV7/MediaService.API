@@ -18,14 +18,11 @@ namespace MediaService.Presentation.Api.Controllers
     public class ImagesController : ControllerBase
     {
         private readonly IImageUseCase _imageUseCase;
-        private readonly IValidator<ImageUploadFileRequest> _validator;
 
         public ImagesController(
-            IImageUseCase mediaUseCase,
-            IValidator<ImageUploadFileRequest> validator)
+            IImageUseCase mediaUseCase)
         {
             _imageUseCase = mediaUseCase;
-            _validator = validator;
         }
 
         /// <summary>
@@ -44,23 +41,55 @@ namespace MediaService.Presentation.Api.Controllers
             [FromForm] ImageUploadFileRequest viewModel,
             CancellationToken cancellationToken)
         {
-            // Map ViewModel (Presentation) → DTO (Core) with default values
+            // Map ViewModel → DTO (only HTTP-specific data extraction, no business logic)
+            using var fileStream = viewModel.File.OpenReadStream();
+
             var request = new UploadImageFileDto
             {
-                FileStream = viewModel.File.OpenReadStream(),
+                FileStream = fileStream,
                 FileName = viewModel.File.FileName,
-                ContentType = viewModel.File.ContentType,
-                FileSize = viewModel.File.Length,
-                GenerateThumbnail = viewModel.GenerateThumbnail ?? ImageProcessingDefaults.GenerateThumbnail,
-                ConvertToWebP = viewModel.ConvertToWebP ?? ImageProcessingDefaults.ConvertToWebP,
-                ThumbnailWidth = viewModel.ThumbnailWidth ?? ImageProcessingDefaults.ThumbnailWidth,
-                WebPQuality = viewModel.WebPQuality ?? ImageProcessingDefaults.WebPQuality
+                GenerateThumbnail = viewModel.GenerateThumbnail,
+                ConvertToWebP = viewModel.ConvertToWebP,
+                ThumbnailWidth = viewModel.ThumbnailWidth,
+                WebPQuality = viewModel.WebPQuality
             };
 
             var response = await _imageUseCase.UploadFileAsync(request, cancellationToken);
 
             return Ok(ApiResponse<UploadResponseDto>.SuccessResponse(response));
         }
+
+        /// <summary>
+        /// Uploads a single image from Base64 data.
+        /// </summary>
+        /// <param name="viewModel">Upload request containing Base64 image data.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Upload response with file metadata and URLs.</returns>
+        [HttpPost("upload-base64")]
+        [Consumes("application/json")]
+        [ValidateWithFluentValidation<ImageUploadBase64Request>]
+        [ProducesResponseType(typeof(ApiResponse<UploadResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UploadBase64(
+            [FromBody] ImageUploadBase64Request viewModel,
+            CancellationToken cancellationToken)
+        {
+            // Map ViewModel → DTO (only HTTP-specific data extraction, no business logic)
+            var request = new UploadImageBase64Dto
+            {
+                Base64Data = viewModel.Base64Data,
+                FileName = viewModel.FileName,
+                GenerateThumbnail = viewModel.GenerateThumbnail,
+                ConvertToWebP = viewModel.ConvertToWebP,
+                ThumbnailWidth = viewModel.ThumbnailWidth,
+                WebPQuality = viewModel.WebPQuality
+            };
+
+            var response = await _imageUseCase.UploadBase64Async(request, cancellationToken);
+
+            return Ok(ApiResponse<UploadResponseDto>.SuccessResponse(response));
+        }
+
 
         /// <summary>
         /// Deletes a file by relative path.

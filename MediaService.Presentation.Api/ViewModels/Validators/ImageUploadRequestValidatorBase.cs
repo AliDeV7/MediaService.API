@@ -4,25 +4,15 @@ using MediaService.Core.Configuration;
 namespace MediaService.Presentation.Api.ViewModels.Validators
 {
     /// <summary>
-    /// Validator for ImageUploadFileRequest ViewModel.
-    /// Validates HTTP-specific concerns and optional parameter ranges when provided.
-    /// Business rules (file size, type, content) are validated in the Infrastructure layer.
-    /// Default value validation happens in Use Case after defaults are applied.
+    /// Base validator for image upload requests.
+    /// Validates common optional processing parameters.
     /// </summary>
-    public class ImageUploadFleRequestValidator : AbstractValidator<ImageUploadFileRequest>
+    /// <typeparam name="T">Type of request inheriting from ImageUploadRequestBase.</typeparam>
+    public abstract class ImageUploadRequestValidatorBase<T> : AbstractValidator<T>
+        where T : ImageUploadRequestBase
     {
-        public ImageUploadFleRequestValidator()
+        protected ImageUploadRequestValidatorBase()
         {
-            // File presence validation
-            RuleFor(x => x.File)
-                .NotNull()
-                .WithMessage("File is required.");
-
-            RuleFor(x => x.File)
-                .Must(file => file != null && file.Length > 0)
-                .WithMessage("File cannot be empty.")
-                .When(x => x.File != null);
-
             // Optional parameter range validation - only when values are provided
             RuleFor(x => x.ThumbnailWidth)
                 .InclusiveBetween(
@@ -39,5 +29,4 @@ namespace MediaService.Presentation.Api.ViewModels.Validators
                 .When(x => x.WebPQuality.HasValue);
         }
     }
-
 }

@@ -19,7 +19,8 @@ namespace MediaService.Presentation.Api
         public static IServiceCollection AddPresentationServices(this IServiceCollection services)
         {
             // Register FluentValidation validators
-            services.AddScoped<IValidator<ImageUploadFileRequest>, ImageUploadFleRequestValidator>();
+            services.AddScoped<IValidator<ImageUploadFileRequest>, ImageUploadFileRequestValidator>();
+            services.AddScoped<IValidator<ImageUploadBase64Request>, ImageUploadBase64RequestValidator>();
 
             // Register the filter as scoped
             services.AddScoped(typeof(FluentValidationFilter<>));

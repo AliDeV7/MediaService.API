@@ -1,5 +1,6 @@
 ﻿using MediaService.Core.Enums;
 using MediaService.Core.Exceptions;
+using System.Text.RegularExpressions;
 
 namespace MediaService.Infrastructure.Helpers
 {
@@ -285,5 +286,100 @@ namespace MediaService.Infrastructure.Helpers
 
             return extension;
         }
+
+        /// <summary>
+        /// Extracts pure Base64 string and detects MIME type from data URI prefix.
+        /// </summary>
+        /// <param name="input">Base64 string with or without data URI prefix (e.g., "data:image/jpeg;base64,...")</param>
+        /// <returns>Tuple of clean Base64 string and detected MIME type</returns>
+        public static (string Base64Data, string MimeType) ExtractBase64AndMimeType(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                throw new ArgumentException("Input cannot be null or empty", nameof(input));
+
+            if (input.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
+            {
+                var parts = input.Split(',', 2);
+                if (parts.Length == 2)
+                {
+                    // Extract MIME type from prefix (e.g., "data:image/jpeg;base64")
+                    var mimeMatch = Regex.Match(parts[0], @"data:(image/[\w+]+);base64", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
+                    var mimeType = mimeMatch.Success ? mimeMatch.Groups[1].Value.ToLowerInvariant() : "image/jpeg";
+                    return (parts[1], mimeType);
+                }
+            }
+
+            // Default to JPEG if no prefix detected
+            return (input, "image/jpeg");
+        }
+
+        /// <summary>
+        /// Gets file extension from MIME type.
+        /// </summary>
+        /// <param name="mimeType">MIME type (e.g., "image/png")</param>
+        /// <returns>File extension including the dot (e.g., ".png")</returns>
+        public static string GetExtensionFromMimeType(string mimeType)
+        {
+            if (string.IsNullOrWhiteSpace(mimeType))
+                throw new ArgumentException("MIME type cannot be null or empty", nameof(mimeType));
+
+            // Find the first extension that maps to this MIME type
+            var extension = ExtensionMimeMap
+                .FirstOrDefault(kvp => kvp.Value.Contains(mimeType, StringComparer.OrdinalIgnoreCase))
+                .Key;
+
+            if (string.IsNullOrEmpty(extension))
+            {
+                // Fallback: try to extract from MIME type (e.g., "image/jpeg" -> ".jpeg")
+                var parts = mimeType.Split('/');
+                if (parts.Length == 2)
+                {
+                    var subtype = parts[1].ToLowerInvariant();
+                    // Handle special cases
+                    return subtype switch
+                    {
+                        "jpeg" => ".jpg",
+                        "svg+xml" => ".svg",
+                        _ => $".{subtype}"
+                    };
+                }
+
+                throw new UnsupportedFileTypeException($"Unsupported MIME type: {mimeType}");
+            }
+
+            return extension;
+        }
+
+        /// <summary>
+        /// Determines final file name with proper extension based on user input and detected MIME type.
+        /// </summary>
+        /// <param name="userFileName">Optional user-provided file name</param>
+        /// <param name="mimeType">Detected MIME type from Base64 data</param>
+        /// <returns>Valid file name with extension</returns>
+        public static string DetermineFileName(string? userFileName, string mimeType)
+        {
+            if (string.IsNullOrWhiteSpace(mimeType))
+                throw new ArgumentException("MIME type cannot be null or empty", nameof(mimeType));
+
+            // If user provided a valid file name with extension, use it
+            if (!string.IsNullOrWhiteSpace(userFileName))
+            {
+                var extension = Path.GetExtension(userFileName);
+                if (!string.IsNullOrEmpty(extension))
+                {
+                    // User provided valid filename with extension
+                    return userFileName;
+                }
+
+                // User provided name without extension, append correct one
+                var detectedExtension = GetExtensionFromMimeType(mimeType);
+                return $"{Path.GetFileNameWithoutExtension(userFileName)}{detectedExtension}";
+            }
+
+            // Generate completely new name with correct extension
+            var generatedExtension = GetExtensionFromMimeType(mimeType);
+            return $"image_{Guid.NewGuid():N}{generatedExtension}";
+        }
+
     }
 }

@@ -2,6 +2,7 @@
 using MediaService.Application.Interfaces;
 using MediaService.Application.Interfaces.Validation;
 using MediaService.Infrastructure.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace MediaService.Infrastructure.Services
 {
@@ -121,21 +122,40 @@ namespace MediaService.Infrastructure.Services
 
         /// <summary>
         /// Processes a Base64-encoded image and prepares it for storage.
+        /// Automatically detects MIME type and generates file name if not provided.
         /// </summary>
+        /// <param name="base64Data">Base64-encoded image data (with or without data URI prefix)</param>
+        /// <param name="fileName">Optional file name. If null, empty, or without extension, a name will be auto-generated</param>
+        /// <param name="options">Processing options for thumbnail and WebP conversion</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Processed upload media with original and transformed images</returns>
         public async Task<UploadMediaDto> ProcessImageFromBase64Async(
             string base64Data,
-            string fileName,
+            string? fileName,
             ImageProcessingDto options,
             CancellationToken cancellationToken = default)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(base64Data);
-            ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
 
-            // Convert Base64 to Stream using helper
-            var fileStream = FileStorageHelper.ConvertBase64ToStream(base64Data);
+            // Extract pure Base64 and detect MIME type from data URI prefix
+            var (cleanBase64, detectedMimeType) = FileTypeHelper.ExtractBase64AndMimeType(base64Data);
+
+            // Determine final file name based on user input and detected MIME type
+            var finalFileName = FileTypeHelper.DetermineFileName(fileName, detectedMimeType);
+
+            Stream fileStream;
+            try
+            {
+                // Convert Base64 to Stream using helper
+                fileStream = FileStorageHelper.ConvertBase64ToStream(cleanBase64);
+            }
+            catch (FormatException ex)
+            {
+                throw new ValidationException("Invalid Base64 format.", ex);
+            }
 
             // Delegate to stream processing method
-            return await ProcessImageFromStreamAsync(fileStream, fileName, options, cancellationToken);
+            return await ProcessImageFromStreamAsync(fileStream, finalFileName, options, cancellationToken);
         }
     }
 }
