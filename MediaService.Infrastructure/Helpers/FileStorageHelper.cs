@@ -1,4 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿using MediaService.Core.Enums;
+using MediaService.Core.Exceptions;
+using System.Security.Cryptography;
 
 namespace MediaService.Infrastructure.Helpers
 {
@@ -54,21 +56,43 @@ namespace MediaService.Infrastructure.Helpers
         }
 
         /// <summary>
-        /// Derives the thumbnail relative path from a main file's relative path.
-        /// Returns null if the path does not follow the expected naming convention.
+        /// Builds the thumbnail relative path from the original image relative path.
+        /// Returns null if the path is invalid or not an image file.
         /// </summary>
-        /// <param name="relativePath">Main file's relative path.</param>
-        /// <returns>Thumbnail path or null if not applicable.</returns>
+        /// <param name="relativePath">Original image relative path.</param>
+        /// <returns>Thumbnail relative path or null.</returns>
         public static string? BuildThumbnailRelativePath(string relativePath)
         {
-            if (!relativePath.EndsWith(".webp", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrWhiteSpace(relativePath))
                 return null;
 
-            var directory = Path.GetDirectoryName(relativePath)?.Replace('\\', '/');
-            var baseName = Path.GetFileNameWithoutExtension(relativePath);
+            var extension = Path.GetExtension(relativePath);
 
-            return directory is not null ? $"{directory}/{baseName}_thumb.webp" : null;
+            if (string.IsNullOrEmpty(extension))
+                return null;
+
+            // Use FileTypeHelper as source of truth for file type detection
+            try
+            {
+                var fileType = FileTypeHelper.GetFileTypeFromExtension(extension);
+
+                // Only images can have thumbnails
+                if (fileType != FileType.Image)
+                    return null;
+            }
+            catch (UnsupportedFileTypeException)
+            {
+                // Not a supported file type, no thumbnail
+                return null;
+            }
+
+            var directory = Path.GetDirectoryName(relativePath) ?? string.Empty;
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(relativePath);
+            var thumbnailFileName = $"{fileNameWithoutExtension}_thumb.webp";
+
+            return Path.Combine(directory, thumbnailFileName).Replace("\\", "/");
         }
+
 
         /// <summary>
         /// Converts a relative path to an absolute disk path.

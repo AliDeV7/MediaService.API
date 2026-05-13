@@ -141,6 +141,12 @@ namespace MediaService.Presentation.Api.Middleware
                     ex.Message
                 ),
 
+                FileDeletionFailedException ex => (
+                    HttpStatusCode.InternalServerError,
+                    ex.ErrorCode,
+                    ex.Message
+                ),
+
                 MediaServiceException ex => (
                     HttpStatusCode.BadRequest,
                     ex.ErrorCode,

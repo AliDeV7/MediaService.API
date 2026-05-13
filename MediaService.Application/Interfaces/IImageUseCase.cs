@@ -24,13 +24,13 @@ namespace MediaService.Application.Interfaces
             CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Deletes a image by relative path.
+        /// Deletes an image by relative path.
         /// </summary>
-        /// <param name="relativePath">Relative file path.</param>
+        /// <param name="request">Delete request containing relative path.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns>True if deleted successfully, false if not found.</returns>
-        Task<bool> DeleteFileAsync(
-            string relativePath,
+        /// <returns>Delete response with metadata about deleted files.</returns>
+        Task<DeleteResponseDto> DeleteFileAsync(
+            DeleteImageDto request,
             CancellationToken cancellationToken = default);
 
         /// <summary>

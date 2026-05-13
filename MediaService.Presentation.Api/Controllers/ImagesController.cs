@@ -1,8 +1,6 @@
-﻿using FluentValidation;
-using MediaService.Application.DTOs;
+﻿using MediaService.Application.DTOs;
 using MediaService.Application.Interfaces;
 using MediaService.Core.Common;
-using MediaService.Core.Configuration;
 using MediaService.Presentation.Api.Filters;
 using MediaService.Presentation.Api.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -92,35 +90,31 @@ namespace MediaService.Presentation.Api.Controllers
 
 
         /// <summary>
-        /// Deletes a file by relative path.
+        /// Deletes an image file by relative path.
         /// </summary>
-        /// <param name="relativePath">Relative file path.</param>
+        /// <param name="viewModel">Delete request containing relative path.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns>Success response if deleted, 404 if not found.</returns>
-        [HttpDelete("{*relativePath}")]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        /// <returns>Delete response with metadata about deleted files.</returns>
+        [HttpDelete]
+        [ValidateWithFluentValidation<ImageDeleteRequest>]
+        [ProducesResponseType(typeof(ApiResponse<DeleteResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteFile(
-            string relativePath,
+            [FromBody] ImageDeleteRequest viewModel,
             CancellationToken cancellationToken)
         {
-            var deleted = await _imageUseCase.DeleteFileAsync(relativePath, cancellationToken);
-
-            if (!deleted)
+            // Map ViewModel → DTO
+            var request = new DeleteImageDto
             {
-                var errorResponse = ApiResponse<object>.FailureResponse(
-                    "FILE_NOT_FOUND",
-                    $"File not found: {relativePath}"
-                );
+                RelativePath = viewModel.RelativePath
+            };
 
-                return NotFound(errorResponse);
-            }
+            var response = await _imageUseCase.DeleteFileAsync(request, cancellationToken);
+            return Ok(ApiResponse<DeleteResponseDto>.SuccessResponse(response));
 
-            var successResponse = ApiResponse<object>.SuccessResponse(
-                new { Message = "File deleted successfully", Path = relativePath }
-            );
-
-            return Ok(successResponse);
         }
+
     }
 }

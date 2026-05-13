@@ -21,6 +21,7 @@ namespace MediaService.Presentation.Api
             // Register FluentValidation validators
             services.AddScoped<IValidator<ImageUploadFileRequest>, ImageUploadFileRequestValidator>();
             services.AddScoped<IValidator<ImageUploadBase64Request>, ImageUploadBase64RequestValidator>();
+            services.AddScoped<IValidator<ImageDeleteRequest>, ImageDeleteRequestValidator>();
 
             // Register the filter as scoped
             services.AddScoped(typeof(FluentValidationFilter<>));
