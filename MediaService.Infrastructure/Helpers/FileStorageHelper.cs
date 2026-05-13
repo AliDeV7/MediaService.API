@@ -306,17 +306,17 @@ namespace MediaService.Infrastructure.Helpers
             // Use BuildFilePath for other formats
             var (filePath, _) = BuildFilePath(baseName, cleanExtension, date);
 
-            // Generate thumbnail path with same extension if needed
+            // Generate thumbnail path with SAME base name if needed
             string? thumbPath = null;
             if (generateThumbnail)
             {
-                var thumbBaseName = $"{GenerateUniqueFileName()}_thumb";
-                var (thumbnailPath, _) = BuildFilePath(thumbBaseName, cleanExtension, date);
-                thumbPath = thumbnailPath;
+                var directory = BuildMediaDirectory("images", date);
+                thumbPath = $"{directory}/{baseName}_thumb{cleanExtension}";
             }
 
             return (filePath, thumbPath);
         }
+
 
 
         // ── Private helpers ──────────────────────────────────────────────────────
