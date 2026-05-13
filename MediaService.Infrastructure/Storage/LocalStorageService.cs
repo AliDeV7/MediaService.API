@@ -100,6 +100,25 @@ namespace MediaService.Infrastructure.Storage
         }
 
         /// <summary>
+        /// Checks if a thumbnail exists for the given image relative path.
+        /// </summary>
+        /// <param name="relativePath">Original image relative path.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Tuple containing thumbnail path (if exists) and whether it exists.</returns>
+        public async Task<(string? ThumbnailPath, bool Exists)> CheckThumbnailExistsAsync(
+            string relativePath,
+            CancellationToken cancellationToken = default)
+        {
+            var thumbnailPath = FileStorageHelper.BuildThumbnailRelativePath(relativePath);
+
+            if (thumbnailPath is null)
+                return (null, false);
+
+            var exists = await FileExistsAsync(thumbnailPath, cancellationToken);
+            return (thumbnailPath, exists);
+        }
+
+        /// <summary>
         /// Constructs a public URL from a relative path.
         /// </summary>
         public string GetPublicUrl(string relativePath)

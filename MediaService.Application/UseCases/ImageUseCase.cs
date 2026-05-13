@@ -2,6 +2,7 @@
 using MediaService.Application.Interfaces;
 using MediaService.Core.Configuration;
 using MediaService.Core.Entities;
+using MediaService.Core.Exceptions;
 
 namespace MediaService.Application.UseCases
 {
@@ -109,17 +110,50 @@ namespace MediaService.Application.UseCases
 
         /// <summary>
         /// Deletes an image by relative path.
+        /// Returns metadata about the deletion operation.
         /// </summary>
-        /// <param name="relativePath">Relative file path.</param>
+        /// <param name="request">Delete request containing relative path.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns>True if deleted successfully, false if not found.</returns>
-        public async Task<bool> DeleteFileAsync(
-            string relativePath,
+        /// <returns>Delete response with metadata about deleted files.</returns>
+        /// <exception cref="FileNotFoundException">Thrown when the file does not exist.</exception>
+        /// <exception cref="FileDeletionFailedException">Thrown when file deletion fails.</exception>
+        public async Task<DeleteResponseDto> DeleteFileAsync(
+            DeleteImageDto request,
             CancellationToken cancellationToken = default)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(relativePath);
-            return await _storageService.DeleteFileAsync(relativePath, cancellationToken);
+            ArgumentNullException.ThrowIfNull(request);
+            ArgumentException.ThrowIfNullOrWhiteSpace(request.RelativePath);
+
+            // 1. Check if file exists before attempting deletion
+            var exists = await _storageService.FileExistsAsync(request.RelativePath, cancellationToken);
+            if (!exists)
+            {
+                throw new Core.Exceptions.FileNotFoundException(request.RelativePath);
+            }
+
+            // 2. Check if thumbnail exists (delegated to storage service)
+            var (thumbnailPath, thumbnailExists) = await _storageService.CheckThumbnailExistsAsync(
+                request.RelativePath,
+                cancellationToken);
+
+            // 3. Delete the file (DeleteFileAsync already handles thumbnail deletion internally)
+            var deleted = await _storageService.DeleteFileAsync(request.RelativePath, cancellationToken);
+
+            if (!deleted)
+            {
+                throw new FileDeletionFailedException(request.RelativePath);
+            }
+
+            // 4. Build response
+            return new DeleteResponseDto
+            {
+                RelativePath = request.RelativePath,
+                ThumbnailRelativePath = thumbnailExists ? thumbnailPath : null,
+                ThumbnailDeleted = thumbnailExists,
+                DeletedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+            };
         }
+
 
         /// <summary>
         /// Checks if an image exists in storage.
