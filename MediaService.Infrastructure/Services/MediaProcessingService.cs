@@ -1,5 +1,6 @@
 ﻿using MediaService.Application.DTOs;
 using MediaService.Application.Interfaces;
+using MediaService.Application.Interfaces.Validation;
 using MediaService.Infrastructure.Helpers;
 
 namespace MediaService.Infrastructure.Services
@@ -10,15 +11,15 @@ namespace MediaService.Infrastructure.Services
     /// </summary>
     public sealed class MediaProcessingService : IMediaProcessingService
     {
-        private readonly IImageProcessor _processor;
-        private readonly IFileValidator _validator;
+        private readonly IImageProcessor _imageProcessor;
+        private readonly IImageValidator _imageValidator;
 
         public MediaProcessingService(
-            IImageProcessor processor,
-            IFileValidator validator)
+            IImageProcessor imageProcessor,
+            IImageValidator imageValidator)
         {
-            _processor = processor;
-            _validator = validator;
+            _imageProcessor = imageProcessor;
+            _imageValidator = imageValidator;
         }
 
         /// <summary>
@@ -39,14 +40,14 @@ namespace MediaService.Infrastructure.Services
                 fileStream.Position = 0;
             }
 
-            // 1. Validate (size, format, dimensions)
-            //await _validator.ValidateFile(fileStream, fileName, cancellationToken);
+            // 1. Validate complete image (size, extension, MIME type, magic bytes, dimensions)
+            await _imageValidator.ValidateCompleteAsync(fileStream, fileName, cancellationToken);
 
             // 2. Process main image (convert to WebP if requested)
             Stream mainStream;
             if (options.ConvertToWebP)
             {
-                mainStream = await _processor.ConvertToWebPAsync(
+                mainStream = await _imageProcessor.ConvertToWebPAsync(
                     fileStream,
                     options.WebPQuality,
                     cancellationToken);
@@ -62,7 +63,7 @@ namespace MediaService.Infrastructure.Services
             }
 
             // 3. Get dimensions from processed stream
-            var dimensions = await _processor.GetImageDimensionsAsync(mainStream, cancellationToken);
+            var dimensions = await _imageProcessor.GetImageDimensionsAsync(mainStream, cancellationToken);
             if (dimensions == null)
             {
                 throw new InvalidOperationException("Failed to extract image dimensions after processing.");
@@ -72,7 +73,7 @@ namespace MediaService.Infrastructure.Services
             Stream? thumbnailStream = null;
             if (options.GenerateThumbnail)
             {
-                thumbnailStream = await _processor.GenerateThumbnailAsync(
+                thumbnailStream = await _imageProcessor.GenerateThumbnailAsync(
                     mainStream,
                     options.ThumbnailWidth,
                     options.WebPQuality,

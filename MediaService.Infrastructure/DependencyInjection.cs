@@ -6,6 +6,8 @@ using MediaService.Infrastructure.Processing;
 using MediaService.Application.Interfaces;
 using MediaService.Infrastructure.Storage;
 using MediaService.Infrastructure.Services;
+using MediaService.Application.Interfaces.Validation;
+using MediaService.Core.Configuration;
 
 namespace MediaService.Infrastructure
 {
@@ -29,8 +31,14 @@ namespace MediaService.Infrastructure
             services.Configure<FileStorageOptions>(
                 configuration.GetSection(FileStorageOptions.SectionName));
 
+            // Configure validation options
+            services.Configure<ImageValidationOptions>(
+                configuration.GetSection(ImageValidationOptions.SectionName));
+
+            // Register validators
+            services.AddScoped<IImageValidator, ImageValidator>();
+
             // Register file-related services
-            services.AddScoped<IFileValidator, FileValidator>();
             services.AddScoped<IImageProcessor, ImageProcessor>();
             services.AddScoped<IStorageService, LocalStorageService>();
             services.AddScoped<IMediaProcessingService, MediaProcessingService>();
