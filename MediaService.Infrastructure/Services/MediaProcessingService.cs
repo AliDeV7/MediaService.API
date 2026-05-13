@@ -1,6 +1,8 @@
 ﻿using MediaService.Application.DTOs;
 using MediaService.Application.Interfaces;
+using MediaService.Application.Interfaces.Validation;
 using MediaService.Infrastructure.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace MediaService.Infrastructure.Services
 {
@@ -10,15 +12,15 @@ namespace MediaService.Infrastructure.Services
     /// </summary>
     public sealed class MediaProcessingService : IMediaProcessingService
     {
-        private readonly IImageProcessor _processor;
-        private readonly IFileValidator _validator;
+        private readonly IImageProcessor _imageProcessor;
+        private readonly IImageValidator _imageValidator;
 
         public MediaProcessingService(
-            IImageProcessor processor,
-            IFileValidator validator)
+            IImageProcessor imageProcessor,
+            IImageValidator imageValidator)
         {
-            _processor = processor;
-            _validator = validator;
+            _imageProcessor = imageProcessor;
+            _imageValidator = imageValidator;
         }
 
         /// <summary>
@@ -39,14 +41,14 @@ namespace MediaService.Infrastructure.Services
                 fileStream.Position = 0;
             }
 
-            // 1. Validate (size, format, dimensions)
-            //await _validator.ValidateFile(fileStream, fileName, cancellationToken);
+            // 1. Validate complete image (size, extension, MIME type, magic bytes, dimensions)
+            await _imageValidator.ValidateCompleteAsync(fileStream, fileName, cancellationToken);
 
             // 2. Process main image (convert to WebP if requested)
             Stream mainStream;
             if (options.ConvertToWebP)
             {
-                mainStream = await _processor.ConvertToWebPAsync(
+                mainStream = await _imageProcessor.ConvertToWebPAsync(
                     fileStream,
                     options.WebPQuality,
                     cancellationToken);
@@ -62,7 +64,7 @@ namespace MediaService.Infrastructure.Services
             }
 
             // 3. Get dimensions from processed stream
-            var dimensions = await _processor.GetImageDimensionsAsync(mainStream, cancellationToken);
+            var dimensions = await _imageProcessor.GetImageDimensionsAsync(mainStream, cancellationToken);
             if (dimensions == null)
             {
                 throw new InvalidOperationException("Failed to extract image dimensions after processing.");
@@ -72,7 +74,7 @@ namespace MediaService.Infrastructure.Services
             Stream? thumbnailStream = null;
             if (options.GenerateThumbnail)
             {
-                thumbnailStream = await _processor.GenerateThumbnailAsync(
+                thumbnailStream = await _imageProcessor.GenerateThumbnailAsync(
                     mainStream,
                     options.ThumbnailWidth,
                     options.WebPQuality,
@@ -120,21 +122,40 @@ namespace MediaService.Infrastructure.Services
 
         /// <summary>
         /// Processes a Base64-encoded image and prepares it for storage.
+        /// Automatically detects MIME type and generates file name if not provided.
         /// </summary>
+        /// <param name="base64Data">Base64-encoded image data (with or without data URI prefix)</param>
+        /// <param name="fileName">Optional file name. If null, empty, or without extension, a name will be auto-generated</param>
+        /// <param name="options">Processing options for thumbnail and WebP conversion</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>Processed upload media with original and transformed images</returns>
         public async Task<UploadMediaDto> ProcessImageFromBase64Async(
             string base64Data,
-            string fileName,
+            string? fileName,
             ImageProcessingDto options,
             CancellationToken cancellationToken = default)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(base64Data);
-            ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
 
-            // Convert Base64 to Stream using helper
-            var fileStream = FileStorageHelper.ConvertBase64ToStream(base64Data);
+            // Extract pure Base64 and detect MIME type from data URI prefix
+            var (cleanBase64, detectedMimeType) = FileTypeHelper.ExtractBase64AndMimeType(base64Data);
+
+            // Determine final file name based on user input and detected MIME type
+            var finalFileName = FileTypeHelper.DetermineFileName(fileName, detectedMimeType);
+
+            Stream fileStream;
+            try
+            {
+                // Convert Base64 to Stream using helper
+                fileStream = FileStorageHelper.ConvertBase64ToStream(cleanBase64);
+            }
+            catch (FormatException ex)
+            {
+                throw new ValidationException("Invalid Base64 format.", ex);
+            }
 
             // Delegate to stream processing method
-            return await ProcessImageFromStreamAsync(fileStream, fileName, options, cancellationToken);
+            return await ProcessImageFromStreamAsync(fileStream, finalFileName, options, cancellationToken);
         }
     }
 }

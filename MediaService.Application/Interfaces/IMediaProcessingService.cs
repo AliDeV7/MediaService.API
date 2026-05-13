@@ -32,7 +32,7 @@ namespace MediaService.Application.Interfaces
         /// <returns>UploadMediaDto ready for storage</returns>
         Task<UploadMediaDto> ProcessImageFromBase64Async(
             string base64Data,
-            string fileName,
+            string? fileName,
             ImageProcessingDto options,
             CancellationToken cancellationToken = default);
     }

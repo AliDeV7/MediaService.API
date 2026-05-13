@@ -3,37 +3,20 @@
     /// <summary>
     /// Request model for uploading an image from Base64-encoded string.
     /// </summary>
-    public class ImageUploadBase64Request
+    public class ImageUploadBase64Request : ImageUploadRequestBase
     {
         /// <summary>
         /// Base64-encoded image data.
+        /// Can include data URI prefix (e.g., "data:image/png;base64,iVBORw0KG...")
+        /// or just the base64 string.
         /// </summary>
         public string Base64Data { get; set; } = null!;
 
         /// <summary>
         /// File name with extension (e.g., "photo.jpg").
+        /// Required to determine file type.
         /// </summary>
-        public string FileName { get; set; } = null!;
-
-        /// <summary>
-        /// Whether to generate a thumbnail for the image.
-        /// </summary>
-        public bool? GenerateThumbnail { get; set; }
-
-        /// <summary>
-        /// Whether to convert the image to WebP format.
-        /// </summary>
-        public bool? ConvertToWebP { get; set; }
-
-        /// <summary>
-        /// Thumbnail width in pixels.
-        /// </summary>
-        public int? ThumbnailWidth { get; set; }
-
-        /// <summary>
-        /// WebP compression quality (1-100).
-        /// </summary>
-        public int? WebPQuality { get; set; }
+        public string? FileName { get; set; } = null!;
     }
 
 }

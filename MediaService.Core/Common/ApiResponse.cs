@@ -22,11 +22,6 @@
         public ErrorDetails? Error { get; set; }
 
         /// <summary>
-        /// Timestamp of the response
-        /// </summary>
-        public long Timestamp { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-        /// <summary>
         /// Creates a successful response
         /// </summary>
         public static ApiResponse<T> SuccessResponse(T data)

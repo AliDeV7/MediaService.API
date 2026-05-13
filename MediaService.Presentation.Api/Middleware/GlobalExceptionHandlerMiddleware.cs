@@ -2,6 +2,7 @@
 using MediaService.Core.Exceptions;
 using System.Net;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using FileNotFoundException = MediaService.Core.Exceptions.FileNotFoundException;
 
 namespace MediaService.Presentation.Api.Middleware
@@ -52,31 +53,55 @@ namespace MediaService.Presentation.Api.Middleware
             var (statusCode, errorCode, message) = MapExceptionToResponse(exception);
             context.Response.StatusCode = (int)statusCode;
 
+            // Generate correlation ID for tracking
+            var correlationId = context.TraceIdentifier ?? Guid.NewGuid().ToString();
+
+            // Log with correlation ID
+            _logger.LogError(
+                exception,
+                "[{CorrelationId}] Unhandled exception: {ErrorCode} - {Message}",
+                correlationId,
+                errorCode,
+                exception.Message
+            );
+
             var response = ApiResponse<object>.FailureResponse(
                 errorCode,
                 message,
                 errors: null
             );
 
-            // Include stack trace only in Development environment
-            if (_environment.IsDevelopment())
+            // Add correlation ID for production support
+            if (!_environment.IsDevelopment())
             {
                 response.Error!.Errors = new Dictionary<string, string[]>
                 {
+                    ["CorrelationId"] = new[] { correlationId }
+                };
+            }
+            else
+            {
+                // Development: full details + correlation ID
+                response.Error!.Errors = new Dictionary<string, string[]>
+                {
+                    ["CorrelationId"] = new[] { correlationId },
                     ["StackTrace"] = new[] { exception.StackTrace ?? "No stack trace available" },
-                    ["InnerException"] = new[] { exception.InnerException?.Message ?? "None" }
+                    ["InnerException"] = new[] { exception.InnerException?.Message ?? "None" },
+                    ["ExceptionType"] = new[] { exception.GetType().FullName ?? "Unknown" }
                 };
             }
 
             var options = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = _environment.IsDevelopment()
+                WriteIndented = _environment.IsDevelopment(),
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
 
             var json = JsonSerializer.Serialize(response, options);
             await context.Response.WriteAsync(json);
         }
+
 
         /// <summary>
         /// Maps exception types to HTTP status codes and error details

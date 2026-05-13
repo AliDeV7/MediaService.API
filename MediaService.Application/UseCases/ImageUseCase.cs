@@ -1,5 +1,6 @@
 ﻿using MediaService.Application.DTOs;
 using MediaService.Application.Interfaces;
+using MediaService.Core.Configuration;
 using MediaService.Core.Entities;
 
 namespace MediaService.Application.UseCases
@@ -35,13 +36,16 @@ namespace MediaService.Application.UseCases
             ArgumentNullException.ThrowIfNull(request.FileStream);
             ArgumentException.ThrowIfNullOrWhiteSpace(request.FileName);
 
+            // applies default values to optional parameters when not provided.
+            ApplyDefaults(request);
+
             // 1. Build processing options from request
             var processingOptions = new ImageProcessingDto
             {
-                GenerateThumbnail = request.GenerateThumbnail,
-                ThumbnailWidth = request.ThumbnailWidth,
-                ConvertToWebP = request.ConvertToWebP,
-                WebPQuality = request.WebPQuality
+                GenerateThumbnail = request.GenerateThumbnail!.Value,
+                ThumbnailWidth = request.ThumbnailWidth!.Value,
+                ConvertToWebP = request.ConvertToWebP!.Value,
+                WebPQuality = request.WebPQuality!.Value
             };
 
             // 2. Process the image (validation, transformation, metadata extraction)
@@ -73,15 +77,17 @@ namespace MediaService.Application.UseCases
         {
             ArgumentNullException.ThrowIfNull(request);
             ArgumentException.ThrowIfNullOrWhiteSpace(request.Base64Data);
-            ArgumentException.ThrowIfNullOrWhiteSpace(request.FileName);
+
+            // applies default values to optional parameters when not provided.
+            ApplyDefaults(request);
 
             // 1. Build processing options from request
             var processingOptions = new ImageProcessingDto
             {
-                GenerateThumbnail = request.GenerateThumbnail,
-                ThumbnailWidth = request.ThumbnailWidth,
-                ConvertToWebP = request.ConvertToWebP,
-                WebPQuality = request.WebPQuality
+                GenerateThumbnail = request.GenerateThumbnail!.Value,
+                ThumbnailWidth = request.ThumbnailWidth!.Value,
+                ConvertToWebP = request.ConvertToWebP!.Value,
+                WebPQuality = request.WebPQuality!.Value
             };
 
             // 2. Process the image (validation, transformation, metadata extraction)
@@ -189,6 +195,19 @@ namespace MediaService.Application.UseCases
                 // Timestamp
                 CreatedAt = mediaFile.UploadedAt
             };
+        }
+
+        /// <summary>
+        /// Applies default values to optional image processing parameters when not provided.
+        /// Uses constants from ImageProcessingDefaults to ensure valid values.
+        /// </summary>
+        /// <param name="request">Request object inheriting from ImageUploadRequestBase.</param>
+        private static void ApplyDefaults(UploadImageBaseDto request)
+        {
+            request.GenerateThumbnail ??= ImageProcessingDefaults.GenerateThumbnail;
+            request.ConvertToWebP ??= ImageProcessingDefaults.ConvertToWebP;
+            request.ThumbnailWidth ??= ImageProcessingDefaults.ThumbnailWidth;
+            request.WebPQuality ??= ImageProcessingDefaults.WebPQuality;
         }
     }
 }
