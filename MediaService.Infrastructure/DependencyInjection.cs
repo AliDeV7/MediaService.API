@@ -8,6 +8,9 @@ using MediaService.Infrastructure.Storage;
 using MediaService.Infrastructure.Services;
 using MediaService.Application.Interfaces.Validation;
 using MediaService.Core.Configuration;
+using MediaService.Core.Entities;
+using MediaService.Application.Interfaces.Auth;
+using MediaService.Infrastructure.Services.Auth;
 
 namespace MediaService.Infrastructure
 {
@@ -34,6 +37,23 @@ namespace MediaService.Infrastructure
             // Configure validation options
             services.Configure<ImageValidationOptions>(
                 configuration.GetSection(ImageValidationOptions.SectionName));
+
+            // Bind ServiceClients from configuration
+            services.Configure<List<ServiceClient>>(
+                configuration.GetSection("ServiceClients"));
+
+            // Register JWT settings
+            services.Configure<JwtSettings>(
+                configuration.GetSection("JwtSettings"));
+
+            // Register ServiceClients configuration
+            services.Configure<List<ServiceClientConfig>>(
+                configuration.GetSection(ServiceClientSettings.SectionName)
+            );
+
+            // Register authentication services
+            services.AddScoped<IClientAuthenticationService, ClientAuthenticationService>();
+            services.AddScoped<ITokenService, JwtTokenService>();
 
             // Register validators
             services.AddScoped<IImageValidator, ImageValidator>();

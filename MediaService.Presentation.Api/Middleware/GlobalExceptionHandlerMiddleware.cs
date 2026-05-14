@@ -110,6 +110,25 @@ namespace MediaService.Presentation.Api.Middleware
         {
             return exception switch
             {
+                // Authentication exceptions
+                InvalidCredentialsException ex => (
+                    HttpStatusCode.Unauthorized,
+                    ex.ErrorCode,
+                    ex.Message
+                ),
+
+                InvalidTokenException ex => (
+                    HttpStatusCode.Unauthorized,
+                    ex.ErrorCode,
+                    ex.Message
+                ),
+
+                InsufficientPermissionsException ex => (
+                    HttpStatusCode.Forbidden,
+                    ex.ErrorCode,
+                    ex.Message
+                ),
+
                 // Custom domain exceptions
                 FileSizeLimitException ex => (
                     HttpStatusCode.BadRequest,
