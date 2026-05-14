@@ -3,6 +3,7 @@ using MediaService.Application.Interfaces;
 using MediaService.Core.Common;
 using MediaService.Presentation.Api.Filters;
 using MediaService.Presentation.Api.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MediaService.Presentation.Api.Controllers
@@ -12,6 +13,7 @@ namespace MediaService.Presentation.Api.Controllers
     /// Maps framework-specific ViewModels to framework-agnostic DTOs.
     /// </summary>
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class ImagesController : ControllerBase
     {
