@@ -1,5 +1,7 @@
 ﻿using MediaService.Application.Interfaces;
+using MediaService.Application.Interfaces.Auth;
 using MediaService.Application.UseCases;
+using MediaService.Application.UseCases.Auth;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MediaService.Application
@@ -15,6 +17,7 @@ namespace MediaService.Application
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IImageUseCase, ImageUseCase>();
+            services.AddScoped<IAuthUseCase, AuthUseCase>();
 
             return services;
         }

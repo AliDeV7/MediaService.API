@@ -1,17 +1,17 @@
 ﻿namespace MediaService.Application.DTOs
 {
     /// <summary>
-    /// Request model for service-to-service authentication
+    /// Data transfer object for client authentication requests
     /// </summary>
-    public class AuthRequest
+    public sealed class TokenRequestDto
     {
         /// <summary>
-        /// Client identifier (e.g., "admin-service", "shop-service")
+        /// Unique identifier for the service client
         /// </summary>
         public string ClientId { get; set; } = string.Empty;
 
         /// <summary>
-        /// Client secret for authentication
+        /// Secret key used to authenticate the client
         /// </summary>
         public string ClientSecret { get; set; } = string.Empty;
     }

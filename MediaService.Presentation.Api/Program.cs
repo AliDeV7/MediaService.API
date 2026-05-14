@@ -14,25 +14,11 @@ builder.Services.AddApplicationServices();
 // Register Infrastructure layer services
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// Register Presentation layer services
-builder.Services.AddPresentationServices();
+// Register Presentation layer services (includes JWT authentication)
+builder.Services.AddPresentationServices(builder.Configuration);
 
-// Configure Swagger/OpenAPI
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-    {
-        Title = "Media Service API",
-        Version = "v1",
-        Description = "API for managing media file uploads and storage"
-    });
-
-    // Enable XML comments if you have them
-    // var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    // var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    // options.IncludeXmlComments(xmlPath);
-});
+// Configure Swagger/OpenAPI with JWT support
+builder.Services.AddSwaggerDocumentation();
 
 // Configure CORS (optional, useful for testing with frontend)
 builder.Services.AddCors(options =>
@@ -68,9 +54,9 @@ app.UseHttpsRedirection();
 // Serve static files from wwwroot/media (so uploaded images are accessible)
 app.UseStaticFiles();
 
-// Authentication/Authorization (skipped for now)
-// app.UseAuthentication();
-// app.UseAuthorization();
+// Authentication & Authorization (now enabled)
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

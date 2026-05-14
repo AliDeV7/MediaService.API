@@ -1,14 +1,17 @@
 ﻿namespace MediaService.Infrastructure.Options
 {
     /// <summary>
-    /// JWT configuration options
+    /// Configuration settings for JWT token generation and validation
     /// </summary>
-    public class JwtOptions
+    public sealed class JwtSettings
     {
-        public const string SectionName = "Jwt";
+        /// <summary>
+        /// Configuration section name in appsettings.json
+        /// </summary>
+        public const string SectionName = "JwtSettings";
 
         /// <summary>
-        /// Secret key for signing tokens
+        /// Secret key used for signing JWT tokens
         /// </summary>
         public string SecretKey { get; set; } = string.Empty;
 
