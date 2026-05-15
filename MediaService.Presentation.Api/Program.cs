@@ -2,6 +2,7 @@ using MediaService.Application;
 using MediaService.Infrastructure;
 using MediaService.Presentation.Api;
 using MediaService.Presentation.Api.Middleware;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,10 +50,18 @@ if (app.Environment.IsDevelopment())
 // Enable CORS
 app.UseCors("AllowAll");
 
-app.UseHttpsRedirection();
+var mediaPath = Path.Combine(builder.Environment.WebRootPath, "media");
 
-// Serve static files from wwwroot/media (so uploaded images are accessible)
-app.UseStaticFiles();
+if (!Directory.Exists(mediaPath))
+{
+    Directory.CreateDirectory(mediaPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(mediaPath),
+    RequestPath = "/media"
+});
 
 // Authentication & Authorization (now enabled)
 app.UseAuthentication();
