@@ -2,6 +2,7 @@
 using MediaService.Application.Interfaces;
 using MediaService.Core.Configuration;
 using MediaService.Core.Entities;
+using MediaService.Core.Enums;
 using MediaService.Core.Exceptions;
 
 namespace MediaService.Application.UseCases
@@ -216,10 +217,11 @@ namespace MediaService.Application.UseCases
                 ThumbnailRelativePath = mediaFile.ThumbnailUrl,
 
                 // Metadata (for client database storage)
-                FileType = mediaFile.MimeType,
+                MimeType = mediaFile.MimeType,
                 FileSize = mediaFile.FileSize,
                 Width = mediaFile.Width,
                 Height = mediaFile.Height,
+                FileType = FileType.Image.ToString(),
 
                 // Identification & integrity
                 Hash = mediaFile.Hash,
