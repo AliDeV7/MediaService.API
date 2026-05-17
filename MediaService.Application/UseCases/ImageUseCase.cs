@@ -208,13 +208,13 @@ namespace MediaService.Application.UseCases
         /// </summary>
         /// <param name="mediaFile">MediaFile entity to map.</param>
         /// <returns>UploadResponse DTO with file metadata and URLs.</returns>
-        private static UploadResponseDto MapToUploadResponse(MediaFile mediaFile)
+        private UploadResponseDto MapToUploadResponse(MediaFile mediaFile)
         {
             return new UploadResponseDto
             {
                 // Relative paths (for client database storage)
-                RelativePath = mediaFile.Url,
-                ThumbnailRelativePath = mediaFile.ThumbnailUrl,
+                RelativePath = _storageService.GetPublicUrl(mediaFile.Url),
+                ThumbnailRelativePath =string.IsNullOrWhiteSpace(mediaFile.ThumbnailUrl) ? null : _storageService.GetPublicUrl(mediaFile.ThumbnailUrl),
 
                 // Metadata (for client database storage)
                 MimeType = mediaFile.MimeType,
