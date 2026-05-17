@@ -1,6 +1,5 @@
 ﻿using MediaService.Application.DTOs;
 using MediaService.Application.Interfaces.Auth;
-using MediaService.Application.UseCases.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

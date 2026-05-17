@@ -96,18 +96,24 @@ namespace MediaService.Infrastructure.Services.Auth
             return Task.FromResult(isActive);
         }
 
-        /// <summary>
-        /// Verifies the client secret using secure comparison
-        /// </summary>
-        private static bool VerifyClientSecret(string providedSecret, string storedSecret)
-        {
-            var providedBytes = Encoding.UTF8.GetBytes(providedSecret);
-            var storedBytes = Encoding.UTF8.GetBytes(storedSecret);
 
-            if (providedBytes.Length != storedBytes.Length)
-            {
-                return false;
-            }
+        /// <summary>
+        /// Verifies the provided client secret against the stored hashed secret using SHA-256.
+        /// Uses constant-time comparison to prevent timing attacks.
+        /// </summary>
+        /// <param name="providedSecret">The plain text secret provided by the client</param>
+        /// <param name="storedHashedSecret">The SHA-256 hashed secret stored in configuration</param>
+        /// <returns>True if the secrets match, false otherwise</returns>
+        private static bool VerifyClientSecret(string providedSecret, string storedHashedSecret)
+        {
+            // Hash the provided secret using SHA-256
+            using var sha256 = SHA256.Create();
+            var providedHash = sha256.ComputeHash(Encoding.UTF8.GetBytes(providedSecret));
+            var providedHashString = Convert.ToHexString(providedHash).ToLowerInvariant();
+
+            // Compare hashes using constant-time comparison to prevent timing attacks
+            var providedBytes = Encoding.UTF8.GetBytes(providedHashString);
+            var storedBytes = Encoding.UTF8.GetBytes(storedHashedSecret);
 
             return CryptographicOperations.FixedTimeEquals(providedBytes, storedBytes);
         }

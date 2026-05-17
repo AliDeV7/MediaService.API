@@ -211,15 +211,18 @@ namespace MediaService.Infrastructure.Helpers
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(relativePath);
 
-            // If baseUrl is empty, return relative path with leading slash
-            if (string.IsNullOrWhiteSpace(baseUrl))
-            {
-                var normalizedPath = relativePath.Replace('\\', '/');
-                return normalizedPath.StartsWith('/') ? normalizedPath : $"/{normalizedPath}";
-            }
+            var normalizedPath = relativePath.Replace('\\', '/');
 
-            // Otherwise, combine baseUrl with relative path
-            return $"{baseUrl.TrimEnd('/')}/{relativePath.Replace('\\', '/')}";
+            // Ensure leading slash
+            if (!normalizedPath.StartsWith('/'))
+                normalizedPath = "/" + normalizedPath;
+
+            // If baseUrl is empty, return app-relative public path
+            if (string.IsNullOrWhiteSpace(baseUrl))
+                return normalizedPath;
+
+            // Combine baseUrl + normalized path
+            return $"{baseUrl.TrimEnd('/')}{normalizedPath}";
         }
 
         /// <summary>

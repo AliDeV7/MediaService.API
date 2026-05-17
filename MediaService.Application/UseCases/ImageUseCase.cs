@@ -2,6 +2,7 @@
 using MediaService.Application.Interfaces;
 using MediaService.Core.Configuration;
 using MediaService.Core.Entities;
+using MediaService.Core.Enums;
 using MediaService.Core.Exceptions;
 
 namespace MediaService.Application.UseCases
@@ -207,19 +208,20 @@ namespace MediaService.Application.UseCases
         /// </summary>
         /// <param name="mediaFile">MediaFile entity to map.</param>
         /// <returns>UploadResponse DTO with file metadata and URLs.</returns>
-        private static UploadResponseDto MapToUploadResponse(MediaFile mediaFile)
+        private UploadResponseDto MapToUploadResponse(MediaFile mediaFile)
         {
             return new UploadResponseDto
             {
                 // Relative paths (for client database storage)
-                RelativePath = mediaFile.Url,
-                ThumbnailRelativePath = mediaFile.ThumbnailUrl,
+                RelativePath = _storageService.GetPublicUrl(mediaFile.Url),
+                ThumbnailRelativePath =string.IsNullOrWhiteSpace(mediaFile.ThumbnailUrl) ? null : _storageService.GetPublicUrl(mediaFile.ThumbnailUrl),
 
                 // Metadata (for client database storage)
-                FileType = mediaFile.MimeType,
+                MimeType = mediaFile.MimeType,
                 FileSize = mediaFile.FileSize,
                 Width = mediaFile.Width,
                 Height = mediaFile.Height,
+                FileType = FileType.Image.ToString(),
 
                 // Identification & integrity
                 Hash = mediaFile.Hash,
