@@ -1,6 +1,7 @@
 ﻿using MediaService.Application.DTOs;
 using MediaService.Application.Interfaces;
 using MediaService.Core.Common;
+using MediaService.Presentation.Api.Attributes;
 using MediaService.Presentation.Api.Filters;
 using MediaService.Presentation.Api.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -33,6 +34,7 @@ namespace MediaService.Presentation.Api.Controllers
         /// <returns>Upload response with file metadata and URLs.</returns>
         [HttpPost("upload-file")]
         [Consumes("multipart/form-data")]
+        [RequirePermission("media:write")]
         [ValidateWithFluentValidation<ImageUploadFileRequest>]
         [ProducesResponseType(typeof(ApiResponse<UploadResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -67,6 +69,7 @@ namespace MediaService.Presentation.Api.Controllers
         /// <returns>Upload response with file metadata and URLs.</returns>
         [HttpPost("upload-base64")]
         [Consumes("application/json")]
+        [RequirePermission("media:write")]
         [ValidateWithFluentValidation<ImageUploadBase64Request>]
         [ProducesResponseType(typeof(ApiResponse<UploadResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
@@ -98,6 +101,7 @@ namespace MediaService.Presentation.Api.Controllers
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Delete response with metadata about deleted files.</returns>
         [HttpDelete]
+        [RequirePermission("media:delete")]
         [ValidateWithFluentValidation<ImageDeleteRequest>]
         [ProducesResponseType(typeof(ApiResponse<DeleteResponseDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
