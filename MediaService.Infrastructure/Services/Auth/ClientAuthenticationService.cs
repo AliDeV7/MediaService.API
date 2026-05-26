@@ -106,14 +106,19 @@ namespace MediaService.Infrastructure.Services.Auth
         /// <returns>True if the secrets match, false otherwise</returns>
         private static bool VerifyClientSecret(string providedSecret, string storedHashedSecret)
         {
-            // Hash the provided secret using SHA-256
-            using var sha256 = SHA256.Create();
-            var providedHash = sha256.ComputeHash(Encoding.UTF8.GetBytes(providedSecret));
+            // Hash the provided secret
+            var providedHash = SHA256.HashData(Encoding.UTF8.GetBytes(providedSecret));
             var providedHashString = Convert.ToHexString(providedHash).ToLowerInvariant();
 
-            // Compare hashes using constant-time comparison to prevent timing attacks
+            // Normalize stored hash to lowercase for consistent comparison
+            var normalizedStored = storedHashedSecret.ToLowerInvariant();
+
             var providedBytes = Encoding.UTF8.GetBytes(providedHashString);
-            var storedBytes = Encoding.UTF8.GetBytes(storedHashedSecret);
+            var storedBytes = Encoding.UTF8.GetBytes(normalizedStored);
+
+            // FixedTimeEquals requires equal lengths — guard against malformed stored hash
+            if (providedBytes.Length != storedBytes.Length)
+                return false;
 
             return CryptographicOperations.FixedTimeEquals(providedBytes, storedBytes);
         }
