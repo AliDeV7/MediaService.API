@@ -11,6 +11,8 @@ using MediaService.Core.Configuration;
 using MediaService.Core.Entities;
 using MediaService.Application.Interfaces.Auth;
 using MediaService.Infrastructure.Services.Auth;
+using MediaService.Infrastructure.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MediaService.Infrastructure
 {
@@ -50,6 +52,22 @@ namespace MediaService.Infrastructure
             services.Configure<List<ServiceClientConfig>>(
                 configuration.GetSection(ServiceClientSettings.SectionName)
             );
+
+            // Register authorization handler
+            services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+            // Register permission-based policies
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("media:read", policy =>
+                    policy.Requirements.Add(new PermissionRequirement("media:read")));
+
+                options.AddPolicy("media:write", policy =>
+                    policy.Requirements.Add(new PermissionRequirement("media:write")));
+
+                options.AddPolicy("media:delete", policy =>
+                    policy.Requirements.Add(new PermissionRequirement("media:delete")));
+            });
 
             // Register authentication services
             services.AddScoped<IClientAuthenticationService, ClientAuthenticationService>();
