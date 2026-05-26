@@ -37,20 +37,22 @@ var app = builder.Build();
 // Register Global Exception Handler (MUST be first) 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
-// Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
+// Always show Swagger (useful during initial deployment testing)
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Media Service API v1");
-    });
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Media Service API v1");
+});
 
 // Enable CORS
 app.UseCors("AllowAll");
 
-var mediaPath = Path.Combine(builder.Environment.WebRootPath, "media");
+// Resolve WebRootPath safely — may be null if wwwroot folder does not exist on disk
+var webRoot = builder.Environment.WebRootPath
+              ?? Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+
+// Build the media directory path and create it if it does not exist
+var mediaPath = Path.Combine(webRoot, "media");
 
 if (!Directory.Exists(mediaPath))
 {
@@ -68,5 +70,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Health check mini-api
+app.MapGet("/health", () => "OK");
 
 app.Run();

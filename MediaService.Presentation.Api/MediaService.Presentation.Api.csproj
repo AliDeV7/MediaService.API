@@ -20,4 +20,15 @@
     <ProjectReference Include="..\MediaService.Infrastructure\MediaService.Infrastructure.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<Content Update="appsettings.Development.json">
+			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="wwwroot/media/**">
+			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
 </Project>
