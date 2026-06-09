@@ -104,7 +104,7 @@ namespace MediaService.Infrastructure.Helpers
         {
             return Path.Combine(
                 storageRootPath,
-                relativePath.Replace('/', Path.DirectorySeparatorChar));
+                relativePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
         }
 
         /// <summary>

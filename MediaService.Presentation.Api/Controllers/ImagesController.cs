@@ -108,7 +108,7 @@ namespace MediaService.Presentation.Api.Controllers
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteFile(
-            [FromBody] ImageDeleteRequest viewModel,
+            [FromQuery] ImageDeleteRequest viewModel,
             CancellationToken cancellationToken)
         {
             // Map ViewModel → DTO
