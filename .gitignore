@@ -365,3 +365,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /MediaService.Presentation.Api/appsettings.Production.json
+/MediaService.Presentation.Api/WebDeployProfile.PublishSettings
