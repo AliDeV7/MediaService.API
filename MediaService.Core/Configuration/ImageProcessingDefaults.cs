@@ -19,7 +19,7 @@
         /// <summary>
         /// Default quality for WebP conversion (1-100).
         /// </summary>
-        public const int WebPQuality = 80;
+        public const int WebPQuality = 100;
 
         /// <summary>
         /// Default value for thumbnail generation.
