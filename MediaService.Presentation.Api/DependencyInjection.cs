@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using MediaService.Application.Options;
 
 namespace MediaService.Presentation.Api
 {
@@ -24,6 +25,11 @@ namespace MediaService.Presentation.Api
             this IServiceCollection services,
             IConfiguration configuration)
         {
+
+            // Bind ImageProcessingOptions to the "ImageProcessing" section in appsettings.json
+            services.Configure<ImageProcessingOptions>(
+                configuration.GetSection(ImageProcessingOptions.SectionName));
+
             // Register FluentValidation validators
             services.AddScoped<IValidator<ImageUploadFileRequest>, ImageUploadFileRequestValidator>();
             services.AddScoped<IValidator<ImageUploadBase64Request>, ImageUploadBase64RequestValidator>();
