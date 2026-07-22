@@ -1,9 +1,10 @@
 ﻿using MediaService.Application.DTOs;
 using MediaService.Application.Interfaces;
-using MediaService.Core.Configuration;
+using MediaService.Application.Options;
 using MediaService.Core.Entities;
 using MediaService.Core.Enums;
 using MediaService.Core.Exceptions;
+using Microsoft.Extensions.Options;
 
 namespace MediaService.Application.UseCases
 {
@@ -15,13 +16,17 @@ namespace MediaService.Application.UseCases
     {
         private readonly IStorageService _storageService;
         private readonly IMediaProcessingService _processingService;
+        private readonly ImageProcessingOptions _processingOptions;
+
 
         public ImageUseCase(
             IStorageService storageService,
-            IMediaProcessingService processingService)
+            IMediaProcessingService processingService,
+            IOptions<ImageProcessingOptions> processingOptions)
         {
             _storageService = storageService;
             _processingService = processingService;
+            _processingOptions = processingOptions.Value;
         }
 
         /// <summary>
@@ -214,7 +219,7 @@ namespace MediaService.Application.UseCases
             {
                 // Relative paths (for client database storage)
                 RelativePath = _storageService.GetPublicUrl(mediaFile.Url),
-                ThumbnailRelativePath =string.IsNullOrWhiteSpace(mediaFile.ThumbnailUrl) ? null : _storageService.GetPublicUrl(mediaFile.ThumbnailUrl),
+                ThumbnailRelativePath = string.IsNullOrWhiteSpace(mediaFile.ThumbnailUrl) ? null : _storageService.GetPublicUrl(mediaFile.ThumbnailUrl),
 
                 // Metadata (for client database storage)
                 MimeType = mediaFile.MimeType,
@@ -238,12 +243,12 @@ namespace MediaService.Application.UseCases
         /// Uses constants from ImageProcessingDefaults to ensure valid values.
         /// </summary>
         /// <param name="request">Request object inheriting from ImageUploadRequestBase.</param>
-        private static void ApplyDefaults(UploadImageBaseDto request)
+        private void ApplyDefaults(UploadImageBaseDto request)
         {
-            request.GenerateThumbnail ??= ImageProcessingDefaults.GenerateThumbnail;
-            request.ConvertToWebP ??= ImageProcessingDefaults.ConvertToWebP;
-            request.ThumbnailWidth ??= ImageProcessingDefaults.ThumbnailWidth;
-            request.WebPQuality ??= ImageProcessingDefaults.WebPQuality;
+            request.GenerateThumbnail ??= _processingOptions.GenerateThumbnail;
+            request.ConvertToWebP ??= _processingOptions.ConvertToWebP;
+            request.ThumbnailWidth ??= _processingOptions.ThumbnailWidth;
+            request.WebPQuality ??= _processingOptions.WebPQuality;
         }
     }
 }

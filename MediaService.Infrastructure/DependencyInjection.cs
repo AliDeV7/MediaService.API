@@ -32,6 +32,7 @@ namespace MediaService.Infrastructure
             this IServiceCollection services,
             IConfiguration configuration)
         {
+
             // Bind FileStorageOptions to the "FileStorage" section in appsettings.json
             services.Configure<FileStorageOptions>(
                 configuration.GetSection(FileStorageOptions.SectionName));
